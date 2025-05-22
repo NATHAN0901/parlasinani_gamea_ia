@@ -3,6 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+Route::get('/chatbot', function () {
+    return Inertia::render('Chatbot');
+})->name('chatbot');
+
 Route::get('/', function () {
     return Inertia::render('welcome');
 })->name('home');

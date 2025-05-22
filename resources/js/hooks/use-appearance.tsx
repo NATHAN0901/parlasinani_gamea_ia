@@ -46,6 +46,15 @@ export function initializeTheme() {
     // Add the event listener for system theme changes...
     mediaQuery()?.addEventListener('change', handleSystemThemeChange);
 }
+/*
+
+export const initializeTheme = () => {
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+}*/
 
 export function useAppearance() {
     const [appearance, setAppearance] = useState<Appearance>('system');
