@@ -1,0 +1,10 @@
+torch>=2.2.0       # +cu118 si tienes CUDA
+transformers>=4.39
+datasets>=2.19
+scikit-learn>=1.5
+typer>=0.9
+fastapi>=0.111
+uvicorn[standard]>=0.29
+pandas>=2.2
+jsonschema>=4.21
+rich>=13.7

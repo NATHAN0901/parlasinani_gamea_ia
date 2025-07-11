@@ -22,3 +22,9 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+data/processed/
+models/
+*.pt
+*.bin
+# Entorno virtual
+.venv/
