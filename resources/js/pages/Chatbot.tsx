@@ -1,433 +1,376 @@
-import { useState, useRef, useEffect } from 'react';
-import AppHeaderLayout from '@/layouts/app/app-header-layout';
-import { getCategories, getProceduresByCategory, getRequirementsByProcedure } from '@/lib/chatbotApi';
-import Logo1 from '@/pages/assets/logo1.png';
+/* ───────────────────────────────────────────── Imports ───────── */
+import {
+  FormEvent,
+  MouseEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { Sun, Moon, SendHorizonal } from "lucide-react";
+import Logo1 from "@/pages/assets/logo1.png";
 
-type Message = {
-  text: string;
-  sender: 'user' | 'bot';
-};
+/* API REST del municipio (categorías, trámites, requisitos) */
+import {
+  getCategories,
+  getProceduresByCategory,
+  getRequirementsByProcedure,
+} from "@/lib/chatbotApi";
 
-type Category = {
-  id: number;
-  nombre_categoria: string;
-};
+/* ────────────────────────────── Tipos ────────────────────────── */
+type Message   = { text: string; sender: "user" | "bot" };
+type Category  = { id: number; nombre_categoria: string };
+type Procedure = { id: number; nombre_tramite: string };
+type Requirement = { id: number; nombre_requisito: string };
 
-type Procedure = {
-  id: number;
-  nombre_tramite: string;
-};
-
-type Requirement = {
-  id: number;
-  nombre_requisito: string;
-};
-
-const Chatbot = () => {
-  const [messages, setMessages] = useState<Message[]>([
-    { 
-      text: '¡Hola! Soy tu asistente virtual para trámites municipales. ¿En qué puedo ayudarte?',
-      sender: 'bot' 
-    },
-    { 
-      text: 'Puedes escribir "categorías" para ver trámites, "preguntas" para ver temas frecuentes, o preguntarme directamente sobre algún procedimiento.',
-      sender: 'bot' 
-    }
-  ]);
-  const [inputMessage, setInputMessage] = useState('');
-  const [isBotTyping, setIsBotTyping] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [procedures, setProcedures] = useState<Procedure[]>([]);
-  const [currentStep, setCurrentStep] = useState<'idle' | 'categories' | 'procedures' | 'faq'>('idle');
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
-
-  // Base de datos de preguntas frecuentes (aproximadamente 200)
-  const faqDatabase = [
-    // Información general
-    {
-      question: "horario",
-      response: "Nuestro horario de atención es de lunes a viernes de 8:00 a 16:00. Sábados de 9:00 a 12:00."
-    },
-    {
-      question: "contacto",
-      response: "Puedes contactarnos al teléfono 1234567 o al correo contacto@municipio.com"
-    },
-    {
-      question: "ubicación",
-      response: "Estamos ubicados en la Calle Principal #123, Centro de la ciudad."
-    },
-    {
-      question: "requisitos generales",
-      response: "Para la mayoría de trámites necesitas:\n1. Fotocopia de cédula de identidad\n2. Comprobante de domicilio\n3. Formulario específico del trámite"
-    },
-
-    
-    // Servicios públicos
-    {
-      question: "reclamo agua",
-      response: "Para reportar problemas con el servicio de agua:\n1. Llama al 0800-AGUA\n2. Presenta reclamo en ventanilla de servicios públicos\n3. Reporta en nuestra app móvil"
-    },
-    {
-      question: "reclamo luz",
-      response: "Reporta problemas de alumbrado público:\n1. Llama al 0800-LUZ\n2. Envía fotografía a reclamos@municipio.com\n3. Reporta en nuestra web"
-    },
-    {
-      question: "basura",
-      response: "El servicio de recolección de basura funciona:\n- Zona norte: lunes, miércoles, viernes\n- Zona sur: martes, jueves, sábado\nHorario: 7:00 a 12:00"
-    }
-    //etc a completar
-
-  ];
-
-  // Función para buscar en las preguntas frecuentes
-  const searchFAQ = (query: string): string | null => {
-    const cleanQuery = query.toLowerCase().trim();
-    
-    // Primero buscar coincidencias exactas
-    const exactMatch = faqDatabase.find(item => 
-      item.question.toLowerCase() === cleanQuery
-    );
-    
-    if (exactMatch) return exactMatch.response;
-    
-    // Luego buscar coincidencias parciales
-    const partialMatch = faqDatabase.find(item => 
-      cleanQuery.includes(item.question.toLowerCase()) || 
-      item.question.toLowerCase().includes(cleanQuery)
-    );
-    
-    if (partialMatch) return partialMatch.response;
-    
-    // Finalmente buscar por palabras clave
-    const keywords = cleanQuery.split(' ');
-    for (const keyword of keywords) {
-      const keywordMatch = faqDatabase.find(item => 
-        item.question.toLowerCase().includes(keyword) && keyword.length > 3
-      );
-      
-      if (keywordMatch) return keywordMatch.response;
-    }
-    
-    return null;
-  };
-
-  const extractNumber = (text: string): number | null => {
-    const match = text.match(/\d+/);
-    const number = match ? parseInt(match[0], 10) : null;
-    console.log(`Extrayendo número de "${text}" -> ${number}`);
-    return number;
-  };
-
-  const formatBotMessage = (text: string) => {
-    const lines = text.split('\n');
-    return (
-      <div className="text-white">
-        {lines.map((line, idx) => (
-          <p key={idx} className="mb-1">
-            {line}
-          </p>
-        ))}
-      </div>
-    );
-  };
-
+/* ─────────────────────── Hooks utilitarios ───────────────────── */
+function useDarkMode(init = false) {
+  const [dark, setDark] = useState(
+    () => localStorage.getItem("darkMode") === "true" || init,
+  );
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    document.documentElement.classList.toggle("dark", dark);
+    localStorage.setItem("darkMode", JSON.stringify(dark));
+  }, [dark]);
+  return [dark, setDark] as const;
+}
+
+function useRipple() {
+  return useCallback((e: MouseEvent<HTMLButtonElement>) => {
+    const btn = e.currentTarget;
+    const d   = Math.max(btn.clientWidth, btn.clientHeight);
+    const s   = document.createElement("span");
+    Object.assign(s.style, {
+      width:  `${d}px`,
+      height: `${d}px`,
+      left:   `${e.clientX - btn.getBoundingClientRect().left - d / 2}px`,
+      top:    `${e.clientY - btn.getBoundingClientRect().top  - d / 2}px`,
+    });
+    s.className = "ripple";
+    btn.querySelector(".ripple")?.remove();
+    btn.appendChild(s);
+  }, []);
+}
+
+function useScrollBottom(deps: unknown[]) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => ref.current?.scrollIntoView({ behavior: "smooth" }), deps);
+  return ref;
+}
+
+/* ────────────────────── Base de FAQ simple ───────────────────── */
+const faqDB = [
+  { question: "horario",    response: "Atención: lun‑vie 08 h – 16 h." },
+  { question: "contacto",   response: "Tel 123‑4567 · contacto@municipio.com" },
+  { question: "ubicación",  response: "Calle Principal #123, Centro" },
+];
+
+/* ─────────────────── Componente principal ───────────────────── */
+export default function Chatbot() {
+  /* UI y helpers */
+  const [dark, setDark] = useDarkMode();
+  const ripple          = useRipple();
+
+  /* Estado del chat */
+  const [messages, setMessages] = useState<Message[]>([
+    { text: "¡Hola! Soy tu asistente virtual municipal. ¿En qué puedo ayudarte?", sender: "bot" },
+    { text: 'Escribe "categorías" para trámites o "preguntas" para FAQ.',        sender: "bot" },
+  ]);
+  const [input,  setInput]  = useState("");
+  const [typing, setTyping] = useState(false);
+
+  /* Última predicción NLP (debug) */
+  const [lastNlp, setLastNlp] = useState<string | null>(null);
+
+  /* Flujo de menú */
+  const [step, setStep] = useState<"idle"|"categories"|"procedures"|"faq">("idle");
+  const [cats,       setCats]       = useState<Category[]>([]);
+  const [procedures, setProcedures] = useState<Procedure[]>([]);
+  const [catSel,     setCatSel]     = useState<Category|null>(null);
+
+  const endRef = useScrollBottom([messages]);
+
+  /* Helpers texto → número */
+  const extractNumber = (t: string) => {
+    const m = t.match(/\d+/); return m ? Number(m[0]) : null;
+  };
+
+  const searchFAQ = (q: string) => {
+    const clean = q.toLowerCase().trim();
+    return (
+      faqDB.find(f => f.question === clean)?.response ??
+      faqDB.find(f => clean.includes(f.question))?.response ??
+      null
+    );
+  };
+
+  const formatBot = (txt: string) =>
+    txt.split("\n").map((l,i)=><p key={i} className="whitespace-pre-wrap">{l}</p>);
 
   const resetFlow = () => {
-    console.log("Reseteando flujo...");
-    setCurrentStep('idle');
-    setSelectedCategory(null);
+    setStep("idle");
+    setCatSel(null);
     setProcedures([]);
   };
 
-  // Función para procesar los requisitos de la API
-  const processRequirements = (requirementsResponse: any): Requirement[] => {
-    console.log("Procesando respuesta de requisitos:", requirementsResponse);
-    
-    // Si la respuesta es un array, lo devolvemos directamente
-    if (Array.isArray(requirementsResponse)) {
-      return requirementsResponse;
-    }
-    
-    // Si es un objeto con propiedades numéricas (como "1", "2", etc.)
-    if (typeof requirementsResponse === 'object' && requirementsResponse !== null) {
-      let allRequirements: Requirement[] = [];
-      
-      // Recorremos todas las claves del objeto
-      Object.keys(requirementsResponse).forEach(key => {
-        const requirementsArray = requirementsResponse[key];
-        
-        // Verificamos que sea un array antes de concatenar
-        if (Array.isArray(requirementsArray)) {
-          allRequirements = [...allRequirements, ...requirementsArray];
-        }
-      });
-      
-      console.log("Requisitos combinados:", allRequirements);
-      return allRequirements;
-    }
-    
-    // Caso por defecto: devolver array vacío
-    console.warn("Formato de respuesta de requisitos no reconocido");
-    return [];
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  /* ──────────── Envío de mensaje ──────────── */
+  async function onSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!inputMessage.trim() || isBotTyping) return;
+    if (!input.trim() || typing) return;
 
-    console.log("--- Inicio de handleSubmit ---");
-    console.log("Mensaje del usuario:", inputMessage);
-    console.log("Paso actual:", currentStep);
-    console.log("Categorías en estado:", categories.length);
-    console.log("Procedimientos en estado:", procedures.length);
-    console.log("Categoría seleccionada:", selectedCategory);
+    /* Añade mensaje del usuario */
+    const userMsg = input;
+    setMessages(p => [...p, { text:userMsg, sender:"user" }]);
+    setInput(""); setTyping(true);
 
-    const userMessage = inputMessage;
-    const userMessageLower = userMessage.toLowerCase();
-
-    setMessages(prev => [...prev, { text: userMessage, sender: 'user' }]);
-    setIsBotTyping(true);
-    let botResponse = '';
-    setInputMessage('');
-
+    /* 1️⃣  NLP: /predict */
+    let nlpCat: string | null = null;
     try {
-      // Paso 0: Verificar preguntas frecuentes
-      const faqResult = searchFAQ(userMessage);
-      if (faqResult) {
-        botResponse = faqResult;
+      const res = await fetch("http://localhost:9000/predict", {
+        method : "POST",
+        headers: { "Content-Type": "application/json" },
+        body   : JSON.stringify({ text: userMsg }),
+      });
+      if (res.ok) {
+        const data = await res.json() as { categoria: string };
+        nlpCat = data.categoria;
+        setLastNlp(nlpCat);
       }
-      // Paso 1: Mostrar categorías
-      else if (userMessageLower.includes('categorias') || currentStep === 'idle') {
-        console.log("Entrando en paso 1: Mostrar categorías");
-        
-        const categoriesList = await getCategories();
-        console.log("Categorías obtenidas de API:", categoriesList);
-        
-        setCategories(categoriesList);
-        
-        if (categoriesList.length) {
-          botResponse = `Estas son las categorías disponibles:\n\n${categoriesList.map((category, index) => `${index + 1}. ${category.nombre_categoria}`).join('\n')}\n\nPor favor, escribe el número de la categoría que te interesa.`;
-          setCurrentStep('categories');
-          console.log("Nuevo paso: categories");
-        } else {
-          botResponse = 'Actualmente no hay categorías disponibles. Por favor intenta más tarde.';
-          resetFlow();
+    } catch { /* silencioso */ }
+
+    /* 2️⃣  Flujo tradicional */
+    let bot = nlpCat ? `Categoría detectada: **${nlpCat}**` : "";
+
+    const faq = searchFAQ(userMsg);
+    if (faq) bot += (bot?"\n\n":"") + faq;
+    else {
+      try {
+        /* 2.1 Listar categorías */
+        if (userMsg.toLowerCase().includes("categorias") || step==="idle") {
+          const db = await getCategories(); setCats(db);
+          bot += (bot?"\n\n":"") +
+            (db.length
+              ? "Categorías:\n" + db.map((c,i)=>`${i+1}. ${c.nombre_categoria}`).join("\n")
+              : "No hay categorías registradas.");
+          setStep(db.length?"categories":"idle");
         }
-      } 
-      // Paso 2: Seleccionar categoría por número
-      else if (currentStep === 'categories') {
-        console.log("Entrando en paso 2: Seleccionar categoría");
-        
-        const selectedNumber = extractNumber(userMessage);
-        console.log("Número extraído para categoría:", selectedNumber);
-        console.log("Categorías disponibles:", categories);
-        
-        if (selectedNumber === null) {
-          console.log("Número inválido para categoría");
-          botResponse = 'Por favor, ingresa un número válido. Por ejemplo: "1" o "opción 1"';
-        } else if (selectedNumber < 1 || selectedNumber > categories.length) {
-          console.log(`Número fuera de rango (1-${categories.length}): ${selectedNumber}`);
-          botResponse = `Número inválido. Por favor ingresa un valor entre 1 y ${categories.length}.`;
-        } else {
-          const selected = categories[selectedNumber - 1];
-          console.log("Categoría seleccionada:", selected);
-          
-          setSelectedCategory(selected);
-          console.log("Categoría seleccionada establecida en estado");
-          
-          // Obtener procedimientos y extraer el array de la respuesta
-          const proceduresResponse = await getProceduresByCategory(selected.id.toString());
-          console.log("Respuesta completa de procedimientos:", proceduresResponse);
-          
-          // Verificar si la respuesta tiene la propiedad 'procedures'
-          const proceduresList = proceduresResponse.procedures || [];
-          console.log("Lista de procedimientos extraída:", proceduresList);
-          
-          setProcedures(proceduresList);
-          
-          if (proceduresList.length > 0) {
-            botResponse = `Trámites disponibles en "${selected.nombre_categoria}":\n\n${proceduresList.map((procedure, index) => `${index + 1}. ${procedure.nombre_tramite}`).join('\n')}\n\nEscribe el número del trámite que deseas consultar.`;
-            setCurrentStep('procedures');
-            console.log("Nuevo paso: procedures");
-          } else {
-            console.log(`No se encontraron procedimientos para categoría ${selected.id}`);
-            botResponse = `Actualmente no hay trámites disponibles en "${selected.nombre_categoria}". Puedes escribir "categorías" para ver otras opciones.`;
+        /* 2.2 Seleccionar categoría */
+        else if (step==="categories") {
+          const idx = extractNumber(userMsg);
+          if (!idx || idx<1 || idx>cats.length)
+            bot += (bot?"\n\n":"") + `Número inválido (1‑${cats.length}).`;
+          else {
+            const cat = cats[idx-1]; setCatSel(cat);
+            const procs = (await getProceduresByCategory(String(cat.id))).procedures;
+            setProcedures(procs);
+            bot += (bot?"\n\n":"") +
+              (procs.length
+                ? `Trámites en "${cat.nombre_categoria}":\n` +
+                  procs.map((p,i)=>`${i+1}. ${p.nombre_tramite}`).join("\n")
+                : `No hay trámites en "${cat.nombre_categoria}".`);
+            setStep(procs.length?"procedures":"idle");
+          }
+        }
+        /* 2.3 Seleccionar trámite */
+        else if (step==="procedures") {
+          const idx = extractNumber(userMsg);
+          if (!idx || idx<1 || idx>procedures.length)
+            bot += (bot?"\n\n":"") + `Número inválido (1‑${procedures.length}).`;
+          else {
+            const proc = procedures[idx-1];
+            const raw  = await getRequirementsByProcedure(String(proc.id));
+            const reqs: Requirement[] = Array.isArray(raw) ? raw : Object.values(raw).flat();
+            bot += (bot?"\n\n":"") +
+              (reqs.length
+                ? `Requisitos de "${proc.nombre_tramite}":\n` +
+                  reqs.map(r=>`• ${r.nombre_requisito}`).join("\n")
+                : "No hay requisitos registrados.");
             resetFlow();
           }
         }
-      }
-      // Paso 3: Seleccionar trámite por número y mostrar requisitos
-      else if (currentStep === 'procedures') {
-        console.log("Entrando en paso 3: Seleccionar procedimiento");
-        
-        const selectedNumber = extractNumber(userMessage);
-        console.log("Número extraído para procedimiento:", selectedNumber);
-        console.log("Procedimientos disponibles:", procedures);
-        
-        if (selectedNumber === null) {
-          console.log("Número inválido para procedimiento");
-          botResponse = 'Por favor, ingresa un número válido. Por ejemplo: "2" o "trámite 2"';
-        } else if (selectedNumber < 1 || selectedNumber > procedures.length) {
-          console.log(`Número fuera de rango (1-${procedures.length}): ${selectedNumber}`);
-          botResponse = `Número inválido. Por favor ingresa un valor entre 1 y ${procedures.length}.`;
-        } else {
-          const selectedProcedure = procedures[selectedNumber - 1];
-          console.log("Procedimiento seleccionado:", selectedProcedure);
-          
-          // Obtener requisitos y procesar la respuesta
-          const requirementsResponse = await getRequirementsByProcedure(selectedProcedure.id.toString());
-          console.log("Respuesta completa de requisitos:", requirementsResponse);
-          
-          // Procesar la respuesta para obtener un array de requisitos
-          const requirementsList = processRequirements(requirementsResponse);
-          console.log("Lista de requisitos procesada:", requirementsList);
-          
-          if (requirementsList.length) {
-            botResponse = `Requisitos para "${selectedProcedure.nombre_tramite}":\n\n${requirementsList.map(requirement => `• ${requirement.nombre_requisito}`).join('\n')}\n\n¿Necesitas algo más? Puedes escribir "categorías" para ver otros trámites.`;
-          } else {
-            console.log(`No se encontraron requisitos para procedimiento ${selectedProcedure.id}`);
-            botResponse = `Actualmente no hay requisitos registrados para "${selectedProcedure.nombre_tramite}". Por favor consulta directamente en las oficinas municipales.`;
-          }
+        /* 2.4 FAQ list */
+        else if (userMsg.toLowerCase().includes("preguntas")) {
+          bot += (bot?"\n\n":"") +
+            (faqDB.length
+              ? "Preguntas frecuentes:\n" + faqDB.map(f=>`• ${f.question}`).join("\n")
+              : "No hay preguntas registradas.");
+          setStep("faq");
+        }
+        /* 2.5 Fallback */
+        else {
+          bot += (bot?"\n\n":"") +
+            'No entiendo. Escribe "categorías" o "preguntas".';
           resetFlow();
         }
-      } 
-      // Paso 4: Mostrar preguntas frecuentes
-      else if (userMessageLower.includes('preguntas') || userMessageLower.includes('frecuentes')) {
-        botResponse = "Estos son algunos temas frecuentes:\n\n" +
-          "• Horario de atención\n" +
-          "• Contacto\n" +
-          "• Ubicación\n" +
-          "• Licencia de conducir\n" +
-          "• Permiso de construcción\n" +
-          "• Registro de propiedad\n" +
-          "• Pago de impuestos\n" +
-          "• Reclamo agua/luz\n" +
-          "• Basura\n" +
-          "• Partida de nacimiento\n" +
-          "• Certificado de residencia\n\n" +
-          "Escribe una de estas palabras clave para obtener más información.";
-        setCurrentStep('faq');
-      }
-      // Comportamiento por defecto
-      else {
-        console.log("Entrando en comportamiento por defecto");
-        botResponse = `Gracias por tu mensaje: "${userMessage}". Si necesitas ayuda con trámites, escribe "categorías" para comenzar, o "preguntas" para ver temas frecuentes.`;
+      } catch {
+        bot = (bot?"\n\n":"") + "Lo siento, ocurrió un error en el servidor.";
         resetFlow();
       }
-    } catch (error) {
-      console.error('Error en el chatbot:', error);
-      botResponse = 'Ocurrió un error al procesar tu solicitud. Por favor intenta nuevamente o comunícate directamente con el municipio.';
-      resetFlow();
     }
 
-    // Simular tiempo de respuesta del bot
-    console.log("Simulando tiempo de respuesta del bot...");
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    /* Delay de “escribiendo…” */
+    await new Promise(r=>setTimeout(r,650));
+    setMessages(p => [...p, { text: bot, sender:"bot" }]);
+    setTyping(false);
+  }
 
-    console.log("Respuesta del bot:", botResponse);
-    setMessages(prev => [...prev, { text: botResponse, sender: 'bot' }]);
-    setIsBotTyping(false);
-    
-    console.log("--- Fin de handleSubmit ---");
-  };
+  /* Esc = limpiar */
+  useEffect(() => {
+    const h = (e:KeyboardEvent)=> e.key==="Escape" && setInput("");
+    window.addEventListener("keydown",h);
+    return ()=>window.removeEventListener("keydown",h);
+  }, []);
 
+  /* ───────────────────────── Hasta aquí, antes del return JSX ── */
+
+  /* ════════════════════════════════════════════════════════════
+     6.  Renderizado
+     ════════════════════════════════════════════════════════════ */
   return (
-    <AppHeaderLayout breadcrumbs={[]}>
-      <div className="chatbot-container bg-black min-h-screen flex flex-col">
-        <header className="chat-header bg-gray-900 text-white shadow-lg py-4">
-          <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between">
-              <img 
-                src={Logo1}
-                alt="Logo Municipalidad" 
-                className="h-16 w-auto" 
-              />
-              
-              <div className="text-center">
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 text-transparent bg-clip-text">
-                  Chatbot Ciudadano
-                </h1>
-                <p className="text-gray-300">Asistente virtual para trámites municipales</p>
-              </div>
-              
-              <img 
-                src={Logo1}
-                alt="Logo Gobierno Regional" 
-                className="h-16 w-auto" 
-              />
-            </div>
-          </div>
-        </header>
+    <div className="flex h-dvh flex-col bg-background text-foreground">
+      {/* HEADER */}
+      <header className="flex items-center gap-4 bg-gradient-to-r from-primary-700 to-primary-500 px-4 py-2 shadow">
+        {/* Logo principal */}
+        <img
+          src={Logo1}
+          alt="Logo principal"
+          className="h-12 max-w-[160px] w-auto object-contain"
+        />
 
-        <div className="chat-messages flex-grow p-4 overflow-y-auto bg-gray-900">
-          {messages.map((message, index) => (
-            <div 
-              key={`msg-${index}-${message.sender}`}
-              className={`mb-4 flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
-              <div className={`max-w-[80%] rounded-lg px-4 py-2 ${message.sender === 'user' 
-                ? 'bg-blue-600 text-white rounded-br-none' 
-                : 'bg-gray-800 text-white rounded-bl-none'}`}
-              >
-                {message.sender === 'bot' 
-                  ? formatBotMessage(message.text)
-                  : message.text}
-              </div>
-            </div>
-          ))}
-          
-          {isBotTyping && (
-            <div className="flex justify-start mb-4">
-              <div className="bg-gray-800 text-white rounded-lg rounded-bl-none px-4 py-2">
-                <div className="flex space-x-1">
-                  <div className="h-2 w-2 bg-white rounded-full animate-bounce"></div>
-                  <div className="h-2 w-2 bg-white rounded-full animate-bounce delay-75"></div>
-                  <div className="h-2 w-2 bg-white rounded-full animate-bounce delay-150"></div>
-                </div>
-              </div>
-            </div>
-          )}
-          
-          <div ref={messagesEndRef} className="h-1" />
+        {/* ─── Títulos ─────────────────────────────────────────── */}
+        <div className="flex-1 text-center">
+          <h1
+            style={{ color: "white" }}
+            className="uppercase tracking-widest font-serif font-extrabold
+                      text-3xl md:text-4xl lg:text-5xl drop-shadow-lg
+                      dark:bg-gradient-to-r dark:from-teal-300 dark:to-cyan-100
+                      dark:bg-clip-text dark:text-transparent"
+          >
+            Chatbot&nbsp;Ciudadano
+          </h1>
+
+
+          <p className="
+              mt-1 text-teal-700 dark:text-teal-200
+              text-sm md:text-base lg:text-lg
+              font-medium tracking-wide
+            "
+          >
+            Asistente virtual de trámites
+          </p>
         </div>
 
-        <form 
-          onSubmit={handleSubmit} 
-          className="input-container bg-gray-800 border-t border-gray-700 p-4"
-        >
-          <div className="flex items-center space-x-2">
-            <input
-              type="text"
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              placeholder="Escribe tu mensaje..."
-              className="flex-grow bg-gray-700 text-white border border-gray-600 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
-              aria-label="Escribe tu mensaje"
-              disabled={isBotTyping}
-            />
-            <button 
-              type="submit" 
-              className="bg-blue-600 hover:bg-blue-500 text-white rounded-full w-12 h-12 flex items-center justify-center transition-colors disabled:opacity-50"
-              disabled={isBotTyping || !inputMessage.trim()}
-              aria-label="Enviar mensaje"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z" />
-              </svg>
-            </button>
-          </div>
-          <p className="text-center text-sm text-gray-400 mt-2">
-            Escribe "categorías" para trámites, "preguntas" para temas frecuentes
-          </p>
-        </form>
-      </div>
-    </AppHeaderLayout>
-  );
-};
 
-export default Chatbot;
+
+        {/* Ícono Dark/Light */}
+        <button
+          onClick={() => setDark((d) => !d)}
+          className="rounded-full p-2 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white"
+          aria-label="Cambiar tema"
+        >
+          {dark ? (
+            <Sun className="h-6 w-6 text-yellow-300" />
+          ) : (
+            <Moon className="h-6 w-6 text-indigo-900" />
+          )}
+        </button>
+
+        {/* Logo secundario */}
+        <img
+          src={Logo1}
+          alt="Logo secundario"
+          className="h-12 max-w-[160px] w-auto object-contain"
+        />
+      </header>
+
+      {/* MENSAJES */}
+      <main className="flex-1 space-y-4 overflow-y-auto px-4 py-6">
+        {messages.map((m, i) => (
+          <div
+            key={i}
+            className={`flex ${
+              m.sender === "user" ? "justify-end" : "justify-start"
+            }`}
+          >
+            <div
+              className={`max-w-[80%] rounded-xl px-4 py-2 shadow-lg backdrop-blur-sm ${
+                m.sender === "user"
+                  ? "bg-accent-500 text-white rounded-br-none"
+                  : "bg-glass border border-white/10 text-foreground rounded-bl-none"
+              }`}
+            >
+              {m.sender === "bot" ? formatBot(m.text) : m.text}
+            </div>
+          </div>
+        ))}
+
+        {typing && (
+          <div className="flex justify-start">
+            <div className="bg-glass rounded-xl rounded-bl-none px-4 py-2 flex gap-1">
+              {[0, 0.15, 0.3].map((d) => (
+                <span
+                  key={d}
+                  className="h-2 w-2 animate-bounce rounded-full bg-primary-200"
+                  style={{ animationDelay: `${d}s` }}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div ref={endRef} />
+      </main>
+
+      {/* INPUT */}
+      <form
+        onSubmit={onSubmit}
+        className="flex items-center gap-3 border-t border-white/10 bg-background px-4 py-4"
+      >
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Escribe tu mensaje…"
+          disabled={typing}
+          className="
+            /* ─── Medidas ─────────────────────────────── */
+            h-20                /* alto 80 px (tablet‑like) */
+            w-11/12 md:w-3/4    /* 92 % en móvil · 75 % en ≥768 px */
+            max-w-2xl           /* nunca pasa de 512 px */
+            mx-auto             /* centrado horizontal */
+
+            /* ─── Estilo visual ───────────────────────── */
+            rounded-full bg-glass
+            px-8 py-5 text-lg tracking-wide
+
+            /* Color adaptativo */
+            text-force-foreground
+            placeholder:text-center placeholder:text-sm placeholder:foreground/50
+            dark:placeholder:text-white/50
+
+            /* Accesibilidad & estados */
+            focus:outline-none focus:ring-1 focus:ring-accent-400
+            disabled:opacity-40
+          "
+        />
+
+
+
+
+        <button
+          type="submit"
+          onMouseDown={ripple}
+          disabled={typing || !input.trim()}
+          className="relative grid h-14 w-14 place-items-center overflow-hidden rounded-full bg-accent-500 transition active:scale-95 enabled:hover:bg-accent-400 disabled:opacity-30"
+          aria-label="Enviar"
+        >
+          {/* ícono SIEMPRE blanco para contrastar */}
+          <SendHorizonal className="h-6 w-6 text-white" />
+        </button>
+      </form>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------
+   Fin — ~360 líneas, comentarios incluidos
+------------------------------------------------------------------ */

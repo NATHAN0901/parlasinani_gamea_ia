@@ -1,0 +1,169 @@
+# 🧩 Sprint 4 — Entrenamiento y puesta en marcha del **Clasificador de Categorías**
+
+> **Objetivo del sprint**  ➡️ Entrenar un modelo DistilBERT que reconozca la categoría municipal de una consulta ciudadana (6 clases) y exponerlo vía API FastAPI/Uvicorn para que el chatbot React pueda consumirlo.
+
+---
+
+## 1. Estructura de carpetas
+
+```text
+nlp-services/
+├─ data/
+│  ├─ raw/               ←  train_v1.json  (dataset completo)
+│  └─ processed/         ←  train/val/test CSV generados
+│
+├─ scripts/              ←  ETL del dataset
+│  ├─ validate_dataset.py      # valida contra JSON‑Schema
+│  ├─ train_schema.json        # esquema de validación
+│  ├─ clean_text.py            # normaliza y exporta CSV
+│  └─ split_dataset.py         # 80 / 10 / 10 split
+│
+├─ nlp_service/
+│  ├─ __init__.py
+│  ├─ utils.py                 # métricas F1 / accuracy
+│  ├─ train.py                 # ENTRENAMIENTO (este sprint)
+│  ├─ api.py                   # API FastAPI
+│  └─ models/
+│     └─ category_classifier/   # pesos + vocab + métricas
+│
+└─ requirements.txt
+```
+
+---
+
+## 2. Preparación del dataset (Sprint 2 & 3)
+
+| Paso | Descripción                                      | Comando                              |
+| ---- | ------------------------------------------------ | ------------------------------------ |
+| 1️⃣  | Validar esquema                                  | `python scripts/validate_dataset.py` |
+| 2️⃣  | Limpiar texto (lower, quitar tildes, normalizar) | `python scripts/clean_text.py`       |
+| 3️⃣  | Split train/val/test 80‑10‑10                    | `python scripts/split_dataset.py`    |
+
+Al terminar aparecen:
+
+```text
+data/processed/train.csv   (1327 filas)
+data/processed/val.csv     (166 filas)
+data/processed/test.csv    (166 filas)
+```
+
+---
+
+## 3. Entorno de trabajo
+
+```bash
+# Crear venv (recomendado)
+py -3.11 -m venv .venv
+.venv\Scripts\activate      # PowerShell / CMD
+
+# Dependencias (CPU‑only)
+pip install --no-cache-dir \
+  torch==2.2.0+cpu -f https://download.pytorch.org/whl/torch_stable.html \
+  transformers==4.41.1 \
+  datasets==2.19.0 \
+  accelerate>=0.21.0 \
+  typer pandas scikit-learn fastapi uvicorn rich safetensors
+```
+
+> *NumPy quedó fijado a **1.26.x** para evitar incompatibilidad con datasets 2.19.*
+
+---
+
+## 4. Entrenamiento del modelo (DistilBERT m‑cased)
+
+```bash
+# Ejecutado desde nlp-services/
+python -m nlp_service.train \
+       --csv-dir data/processed \
+       --out-dir nlp_service/models/category_classifier \
+       --epochs 3 \
+       --batch 8
+```
+
+### Puntos clave del script `train.py`
+
+* **Tokenización** con `DistilBertTokenizerFast` + `DataCollatorWithPadding` (padding dinámico).
+* **TrainingArguments**: `evaluation_strategy="epoch"`, `save_strategy="epoch"`, `load_best_model_at_end=True`.
+* Métricas personalizadas en `utils.py` (accuracy, F1 macro/weighted).
+
+#### Resultado final (CPU i5‑13ª gen · 16 GB)
+
+| Métrica test  | Valor      |
+| ------------- | ---------- |
+| Accuracy      | **0.849**  |
+| F1 (macro)    | 0.855      |
+| F1 (weighted) | 0.849      |
+| Cross‑entropy | 0.54       |
+| Training time | 5 min 23 s |
+
+Los pesos y vocabulario quedan en:
+`nlp_service/models/category_classifier/`.
+
+---
+
+## 5. API de inferencia
+
+```bash
+uvicorn nlp_service.api:app --host 0.0.0.0 --port 8000
+```
+
+### Ejemplo de llamada
+
+<details>
+<summary>PowerShell (Invoke‑RestMethod)</summary>
+
+```powershell
+Invoke-RestMethod -Method Post -Uri http://localhost:8000/predict `
+                  -Body '{"text":"quiero renovar mi licencia de funcionamiento"}' `
+                  -ContentType 'application/json'
+```
+
+</details>
+
+<details>
+<summary>cURL real (curl.exe / Bash)</summary>
+
+```bash
+curl.exe -X POST http://localhost:8000/predict \
+         -H "Content-Type: application/json" \
+         -d '{"text":"quiero renovar mi licencia de funcionamiento"}'
+```
+
+</details>
+
+**Respuesta**
+
+```json
+{"categoria":"ACTIVIDAD ECONÓMICA Y PUBLICIDAD"}
+```
+
+---
+
+## 6. Problemas resueltos en el sprint
+
+| Error                                                        | Causa                                    | Fix                                                                  |
+| ------------------------------------------------------------ | ---------------------------------------- | -------------------------------------------------------------------- |
+| `ModuleNotFoundError: nlp_service`                           | Script ejecutado como file               | Ejecutar con `python -m` o usar imports relativos                    |
+| `Type 16 arrow schema`                                       | Columns string sin remover               | `remove_columns(["category","subcategory"])`                         |
+| `TrainingArguments unexpected keyword 'evaluation_strategy'` | Transformers antiguo / datasets 4.0 fake | Migrar a Python 3.11, instalar transformers 4.41.1 + datasets 2.19.0 |
+| `stack expects each tensor to be equal size`                 | Falta padding                            | `DataCollatorWithPadding`                                            |
+| `No space left on device`                                    | Disco lleno instalando wheels            | `--no-cache-dir`, purgar cache, torch‑cpu                            |
+
+---
+
+## 7. Próximos pasos
+
+1. **Sprint 5** → entrenar sub‑clasificadores por categoría (`subcategory_<cat>`).
+2. Dockerizar el servicio con `torch-cpu` y exponer en el VPS.
+3. Integrar endpoint en React + flujo de voz.
+4. Registrar preguntas rechazadas para retrain mensual.
+
+---
+
+### 🔗 Comando resumen
+
+```bash
+python -m nlp_service.train --csv-dir data/processed --out-dir nlp_service/models/category_classifier --epochs 3 --batch 8
+```
+
+¡Sprint 4 completado 🚀!  Ahora el chatbot puede detectar la categoría municipal de cada consulta con \~85 % de precisión.

@@ -1,0 +1,257 @@
+# Chatbot Ciudadano — Guía de Configuración y Personalización
+
+Este repositorio contiene un **Chatbot React** integrado en un proyecto **Laravel + Vite**, con **Tailwind CSS** y numerosas mejoras de UI.
+
+---
+
+## 📂 Estructura del Proyecto
+
+```
+/ (raíz del proyecto)
+├─ package.json
+├─ tailwind.config.js
+├─ postcss.config.js
+├─ resources/
+│  ├─ css/
+│  │  └─ app.css        ← estilos globales Tailwind + utilidades
+│  ├─ js/
+│  │  ├─ app.tsx        ← punto de entrada React
+│  │  └─ Chatbot.tsx    ← componente principal del Chatbot
+│  └─ views/
+│     └─ layouts/app.blade.php  ← plantilla Blade que carga Vite y fuentes
+└─ vite.config.ts      ← configuración de Vite + Laravel
+```
+
+---
+
+## 🏁 1. Instalación de dependencias
+
+> **Desde la raíz** (donde está `package.json`):
+
+```bash
+# Usando npm:
+npm install -D tailwindcss postcss autoprefixer @tailwindcss/forms tailwindcss-animate
+
+# O yarn:
+yarn add -D tailwindcss postcss autoprefixer @tailwindcss/forms tailwindcss-animate
+```
+
+* `-D` indica dependencias de desarrollo.
+
+---
+
+## ⚙️ 2. Configuración de Tailwind + PostCSS
+
+1. **Crear archivos de config** (si `npx tailwindcss init -p` falla, créalos manualmente):
+
+   * `tailwind.config.js`
+   * `postcss.config.js`
+
+2. **Contenido mínimo de ********`postcss.config.js`********:**
+
+   ```js
+   module.exports = {
+     plugins: {
+       tailwindcss: {},
+       autoprefixer: {},
+     },
+   };
+   ```
+
+3. **`tailwind.config.js`**\*\* completo:\*\*
+
+   ```js
+   /** @type {import('tailwindcss').Config} */
+   module.exports = {
+     darkMode: 'class',
+     content: [
+       './resources/js/**/*.{js,ts,jsx,tsx}',
+       './resources/css/app.css',
+       './resources/views/**/*.blade.php',
+     ],
+     theme: {
+       extend: {
+         fontFamily: {
+           sans: ['Inter','sans-serif'],
+           serif: ['Merriweather','serif'],
+         },
+         colors: {
+           primary: { /* tonos azules */ },
+           amber: { /* tonos naranja */ },
+           emerald: { /* tonos verde */ },
+           rose: { /* tonos coral */ },
+           violet: { /* tonos violeta */ },
+           teal: { /* tonos turquesa */ },
+           customRed: { /* tu paleta rojo personalizada */ },
+         },
+         borderRadius: { xs:'6px', s:'10px', m:'18px' },
+       },
+     },
+     plugins: [
+       require('@tailwindcss/forms'),
+       require('tailwindcss-animate'),
+     ],
+   }
+   ```
+
+---
+
+## 📦 3. CSS Global (`resources/css/app.css`)
+
+1. **Importa directivas Tailwind** al inicio:
+
+   ```css
+   @tailwind base;
+   @tailwind components;
+   @tailwind utilities;
+   ```
+
+2. **Variables CSS & base layer** (modo claro/oscuro, compatibilidad bordes):
+
+   ```css
+   @layer base {
+     :root { /* variables OKLCH */ }
+     .dark { /* variables oscuro */ }
+     *, ::before, ::after, ::file-selector-button {
+       border-color: var(--border, currentColor);
+     }
+     body { @apply bg-background text-foreground font-sans; }
+   }
+   ```
+
+3. **Utilidades personalizadas** (ripple, fade, typing dots):
+
+   ```css
+   @layer utilities {
+     .bg-glass { background-color: rgba(255,255,255,0.04); }
+
+     /* Ripple */
+     .ripple {
+       position: absolute;
+       border-radius: 50%;
+       background-color: rgba(255,255,255,0.7);
+       transform: scale(0);
+       animation: ripple 600ms linear;
+       pointer-events: none;
+     }
+     @keyframes ripple { to { transform: scale(4); opacity: 0; } }
+
+     /* Fade-in */
+     @keyframes fadeInMsg {
+       from { opacity:0; transform: translateY(10px); }
+       to   { opacity:1; transform: translateY(0); }
+     }
+     .animate-fade-in { animation: fadeInMsg 500ms ease-in-out both; }
+
+     /* Typing dots */
+     @keyframes bounceDot {
+       0%,100% { transform: translateY(0); }
+       50%     { transform: translateY(-6px); }
+     }
+     .animate-bounce-dot { animation: bounceDot 1.2s infinite ease-in-out; }
+   }
+   ```
+
+---
+
+## 🔗 4. Plantilla Blade (`resources/views/layouts/app.blade.php`)
+
+```blade
+<!DOCTYPE html>
+<html lang="{{ str_replace('_','-',app()->getLocale()) }}" class="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <!-- Fuentes Google -->
+  <link href="https://fonts.googleapis.com/css2?
+    family=Inter:wght@400;600;700&
+    family=Merriweather:wght@400;700&
+    display=swap"
+    rel="stylesheet">
+
+  @vite(['resources/css/app.css','resources/js/app.tsx'])
+  @inertiaHead
+</head>
+<body class="font-sans antialiased">
+  @inertia
+</body>
+</html>
+```
+
+> Asegúrate de eliminar imports duplicados de otras fuentes.
+
+---
+
+## 🌐 5. Componente Chatbot (`resources/js/Chatbot.tsx`)
+
+* **Dark mode**: toggle en header, guarda en `localStorage`, aplica `class="dark"`.
+* **Ripple** en el botón de enviar (`createRipple`).
+* **Typing indicator**: 3 dots con `bg-teal-500 rounded-full animate-bounce-dot` y `animation-delay`.
+* **Fade-in**: burbujas con `.animate-fade-in`.
+* **Transitions suaves**: `transition duration-500 ease-in-out` en botones, header, imágenes.
+
+```tsx
+// …imports…
+const Chatbot = () => {
+  // …estado…
+  const createRipple = …;
+  // …lógica de chat…
+  return (
+    <div className="flex flex-col w-screen h-screen bg-background text-foreground">
+      <header className="… transition duration-500 ease-in-out">…</header>
+      <main className="…">
+        {messages.map(...)}
+
+        {isBotTyping && (
+          <div className="flex justify-start mb-4">
+            <div className="bg-glass text-foreground rounded-xl px-4 py-2 flex space-x-2">
+              <span className="w-3 h-3 bg-teal-500 rounded-full animate-bounce-dot" style={{ animationDelay: '0s' }} />
+              <span className="w-3 h-3 bg-teal-500 rounded-full animate-bounce-dot" style={{ animationDelay: '0.2s' }} />
+              <span className="w-3 h-3 bg-teal-500 rounded-full animate-bounce-dot" style={{ animationDelay: '0.4s' }} />
+            </div>
+          </div>
+        )}
+        <div ref={messagesEndRef} />
+      </main>
+
+      <form onSubmit={handleSubmit} className="…">
+        <input className="… transition duration-500 ease-in-out focus:ring-2 focus:ring-accent-400" />
+        <button
+          onMouseDown={createRipple}
+          className="… transition duration-500 ease-in-out relative overflow-hidden"
+        >…</button>
+      </form>
+    </div>
+  );
+};
+export default Chatbot;
+```
+
+---
+
+## 🚀 6. Comandos de desarrollo
+
+```bash
+# Iniciar dev server
+npm run dev
+
+# Compilar producción
+npm run build
+
+# (Opcional) Arreglar vulnerabilidades auditadas
+audit fix
+```
+
+---
+
+## 🎨 7. Uso de colores de acento
+
+Paletas disponibles: `amber`, `emerald`, `rose`, `violet`, `teal`, `customRed`.
+
+* Ejemplo botón rojo: `className="bg-customRed-500 hover:bg-customRed-600 text-white"`
+* Ejemplo badge verde: `<span className="bg-emerald-200 text-emerald-800 px-2 py-1 rounded">OK</span>`
+
+---
+
+Con esto tienes un resumen **paso a paso** de todo el proceso, desde la instalación hasta las **animaciones**, **paletas** y **mejoras de UX** implementadas.  ¡A disfrutar de tu Chatbo!
