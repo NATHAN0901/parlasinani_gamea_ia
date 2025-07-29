@@ -167,3 +167,17 @@ python -m nlp_service.train --csv-dir data/processed --out-dir nlp_service/model
 ```
 
 ¡Sprint 4 completado 🚀!  Ahora el chatbot puede detectar la categoría municipal de cada consulta con \~85 % de precisión.
+
+con el modelo  BERT:d
+{
+  "eval_loss": 0.4953695237636566,
+  "eval_accuracy": 0.8493975903614458,
+  "eval_f1_macro": 0.8231022646116987,
+  "eval_f1_weighted": 0.8479686941837432,
+  "eval_runtime": 1.3283,
+  "eval_samples_per_second": 124.975,
+  "eval_steps_per_second": 8.281,
+  "epoch": 6.0
+}
+
+python -m nlp_service.train --csv-dir data/processed --out-dir nlp_service/models/category_classifier --epochs 6 --batch 16 --model-name bert-base-multilingual-cased --lr 1e-5

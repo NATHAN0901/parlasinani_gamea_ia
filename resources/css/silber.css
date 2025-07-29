@@ -1,0 +1,169 @@
+/* ==========================================================================
+   SILBER SIDEBAR – “CYBER‑AURORA” v2.1
+   (mismos tokens que chatbot1.css)
+   ========================================================================== */
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap");
+
+:root {
+  --font-family: "Nunito", sans-serif;
+  --color-bg-1: #002d72;
+  --color-bg-2: #007cf0;
+  --color-bg-3: #00dfd8;
+  --color-surface: #ffffff;
+  --color-text: #002033;
+  --glow-primary: #00dfd8;
+  --glow-lines: #a2d2ff;
+  --radius-soft: 20px;
+  --radius-full: 50%;
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+}
+
+/* ---------- Sidebar contenedor ---------- */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: var(--space-2);
+  width: 74px;          /* ➟ colapsado */
+  transition: width 0.35s ease;
+  background: linear-gradient(
+    160deg,
+    var(--color-bg-2) 0%,
+    var(--color-bg-1) 90%
+  );
+  color: var(--color-surface);
+  font-family: var(--font-family);
+  overflow: hidden;     /* oculta texto cuando se colapsa */
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+.sidebar.extended {
+  width: 250px;         /* ➟ expandido */
+}
+
+/* overlay line pattern */
+.sidebar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    135deg,
+    transparent 0 8px,
+    rgba(255, 255, 255, 0.05) 8px 12px
+  );
+  pointer-events: none;
+}
+
+/* ---------- Botón genérico con icono ---------- */
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.08);
+  display: grid;
+  place-items: center;
+  border: none;
+  cursor: pointer;
+  transition: background 0.25s, transform 0.25s;
+}
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  transform: scale(1.05);
+}
+.icon-btn img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(1);
+}
+
+/* ---------- Top (logo + “nuevo chat”) ---------- */
+.top {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.menu-toggle {
+  align-self: flex-end;
+}
+
+.new-chat {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  background: var(--glow-primary);
+  border: none;
+  border-radius: var(--radius-soft);
+  color: var(--color-text);
+  font-weight: 700;
+  cursor: pointer;
+  transition: box-shadow 0.25s;
+}
+.new-chat:hover {
+  box-shadow: 0 0 12px var(--glow-primary);
+}
+.new-chat img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0);
+}
+.new-chat span {
+  white-space: nowrap;
+}
+
+/* ---------- Sección “Recientes” ---------- */
+.recent {
+  margin-top: var(--space-3);
+}
+.recent-title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--glow-lines);
+  margin: 0 0 var(--space-1);
+}
+
+.recent-entry {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  border-radius: var(--radius-soft);
+  color: var(--color-surface);
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.25s;
+}
+.recent-entry:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+.recent-entry img {
+  width: 20px;
+  height: 20px;
+  filter: brightness(0) invert(1);
+}
+.recent-entry span {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- Parte inferior ---------- */
+.bottom {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.bottom-item {
+  background: rgba(255, 255, 255, 0.06);
+}
+.bottom-item:hover {
+  background: rgba(255, 255, 255, 0.15);
+}

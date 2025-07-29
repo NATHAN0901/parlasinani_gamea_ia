@@ -1,0 +1,49 @@
+{
+  "success": true,
+  "procedures": [
+    {
+      "id": 228,
+      "nombre_tramite": "CALIFICACIÓN DE DISCAPACIDAD",
+      "descripcion_tramite": "LA CALIFICACIÓN DE DISCAPACIDAD OTORGARÁ EL PORCENTAJE EN LA QUE SE ENCUENTRA, ES UN TRÁMITE REQUERIDO PARA QUE LA PERSONA QUE SUFRE DE ALGÚN TIPO DE DISCAPACIDAD PUEDA INICIAR LOS TRÁMITES PARA SACAR EL CARNET DE DISCAPACIDAD Y OPTAR RECIBIR EL PAGO MENSUAL DE DISCAPACIDAD.",
+      "imagen_tramite": "http://ciudadania.elalto.gob.bo/storage/images_procedures/1727714741_66fad5b548849.png"
+    },
+    {
+      "id": 250,
+      "nombre_tramite": "OBTENER EL CARNET DE DISCAPACIDAD",
+      "descripcion_tramite": "LAS PERSONAS CON DISCAPACIDAD DE LA CIUDAD DE EL ALTO PUEDEN OPTAR A RECIBIR EL BONO MENSUAL DE DISCAPACIDAD OTORGADA POR LA ALCALDÍA DE EL ALTO. PARA ELLO UN REQUISITO FUNDAMENTAL SERÁ SER PORTADOR DEL CARNET DE DISCAPACIDAD.",
+      "imagen_tramite": "http://ciudadania.elalto.gob.bo/storage/images_procedures/1727716320_66fadbe038c9e.png"
+    },
+    {
+      "id": 251,
+      "nombre_tramite": "OBTENCIÓN DE INFORME MÉDICO",
+      "descripcion_tramite": "EL INFORME MÉDICO DE DISCAPACIDAD, ES UN REQUISITO NECESARIO PARA OBTENER EL CARNET DE DISCAPACIDAD. PARA ELLO EL INTERESADO DEBERÁ PRESENTARSE EN EL CENTRO DE SALUD MAS CERCANO A SU RESIDENCIA, LUEGO SERÁ DERIVADO A UN HOSPITAL DONDE EL INTERESADO DEBE SOLICITAR UNA NOTA AL DIRECTOR DEL HOSPITAL PARA LA ENTREGA DEL INFORME.",
+      "imagen_tramite": "http://ciudadania.elalto.gob.bo/storage/images_procedures/1727718611_66fae4d31d222.png"
+    },
+    {
+      "id": 252,
+      "nombre_tramite": "REALIZAR COBRO DEL BONO MENSUAL DE DISCAPACIDAD",
+      "descripcion_tramite": "LOS BENEFICIARIOS DEL BONO MENSUAL DE DISCAPACIDAD PODRÁN HACER EL COBRO DE  250 BS CADA MES, ADEMAS EL BONO ES ACUMULABLE DONDE EL BENEFICIARIO PODRÁ REALIZAR SU COBRO DE TODO EL AÑO HASTA EL 20 DE DICIEMBRE, CASO CONTRARIO EL EFECTIVO SERÁ DEVUELTO AL ESTADO.",
+      "imagen_tramite": "http://ciudadania.elalto.gob.bo/storage/images_procedures/1727720561_66faec71c6c64.png"
+    },
+    {
+      "id": 253,
+      "nombre_tramite": "PAGO A DOMICILIO A PERSONA CON DISCAPACIDAD",
+      "descripcion_tramite": "EL BENEFICIARIO DEL BONO MENSUAL DE DISCAPACIDAD PODRÁ OPTAR A RECIBIR EL PAGO EN SU DOMICILIO, CONFORME A LA INPOSIBILIDAD QUE TENGA PARA PRESENTARSE LOS DÍAS DE PAGO.",
+      "imagen_tramite": "http://ciudadania.elalto.gob.bo/storage/images_procedures/1727727903_66fb091f0d7a5.png"
+    },
+    {
+      "id": 266,
+      "nombre_tramite": "CAMBIO DE MUNICIPIO",
+      "descripcion_tramite": "DURANTE ESTE TRÁMITE LA PERSONA QUE REALIZA EL COBRO MENSUAL DE DISCAPACIDAD PUEDE HACER EL CAMBIO DE MUNICIPIO SEGÚN EL LUGAR EN DONDE HABITA. PERO DURANTE EL TIEMPO DE TRÁMITE EL BENEFICIARIO PODRÁ SEGUIR COBRANDO EN EL MUNICIPIO ACTUAL.",
+      "imagen_tramite": "http://ciudadania.elalto.gob.bo/storage/images_procedures/1730127516_671fa69c7dbdf.png"
+    }
+  ],
+  "pagination": {
+    "total": 6,
+    "per_page": 10,
+    "current_page": 1,
+    "last_page": 1,
+    "from": 1,
+    "to": 6
+  }
+}

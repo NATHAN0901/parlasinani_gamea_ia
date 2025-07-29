@@ -1,0 +1,49 @@
+{
+  "success": true,
+  "procedures": [
+    {
+      "id": 29,
+      "nombre_tramite": "ZONIFICACIÓN Y REZONIFICACIÓN",
+      "descripcion_tramite": "PARA EL REGISTRO Y RESGUARDO DE LAS ÁREAS DE EQUIPAMIENTO DEL MUNICIPIO",
+      "imagen_tramite": "http://ciudadania.elalto.gob.bo/storage/images_procedures/1725396539_66d7763b381ff.png"
+    },
+    {
+      "id": 30,
+      "nombre_tramite": "VISADO Y CERTIFICACIÓN PARA LEY 3436",
+      "descripcion_tramite": "ES LA APROBACIÓN DE PLANO Y OBTENCIÓN DE LA RESOLUCIÓN TÉCNICA ADMINISTRATIVA RTA",
+      "imagen_tramite": "http://ciudadania.elalto.gob.bo/storage/images_procedures/1725396542_66d7763e13046.png"
+    },
+    {
+      "id": 31,
+      "nombre_tramite": "VISADO DE LOTE Y CERTIFICACIÓN PARA DERECHOS REALES SUPERFICIES MAYOR O IGUAL A 1000,00 M2",
+      "descripcion_tramite": "CONSISTE EN LA OTORGACIÓN DEL VISTO BUENO PARA LA ACTUALIZACIÓN DE DATOS TÉCNICOS DE SU TERRENO, A FIN DE PERFECCIONAR SU DERECHO PROPIETARIO EN OFICINAS DE DDRR",
+      "imagen_tramite": "http://ciudadania.elalto.gob.bo/storage/images_procedures/1725396545_66d77641acbb9.png"
+    },
+    {
+      "id": 37,
+      "nombre_tramite": "RESOLUCIÓN MUNICIPAL DE NOMINACIÓN DE CALLES Y AVENIDAS",
+      "descripcion_tramite": "PARA LA OBTENCIÓN DE PLANO Y RESOLUCIÓN MUNICIPAL DE NOMINACIÓN DE VÍAS QUE CUENTAN CON PLANIMETRÍA APROBADA.",
+      "imagen_tramite": "http://ciudadania.elalto.gob.bo/storage/images_procedures/1725396561_66d77651b4f22.png"
+    },
+    {
+      "id": 39,
+      "nombre_tramite": "CERTIFICACIÓN DE NÚMERO DE DOMICILIO",
+      "descripcion_tramite": "OBTENCIÓN DE CERTIFICACIÓN DE NÚMERO DE PUERTA",
+      "imagen_tramite": "http://ciudadania.elalto.gob.bo/storage/images_procedures/1725396567_66d7765798428.png"
+    },
+    {
+      "id": 267,
+      "nombre_tramite": "CERTIFICACIÓN DE LEGALIZACIÓN DE LOTE",
+      "descripcion_tramite": "ES EL DOCUMENTO QUE CERTIFICA LA LEGALIZACION DE UN LOTE",
+      "imagen_tramite": "http://ciudadania.elalto.gob.bo/storage/images_procedures/1731095543_672e6bf79017d.png"
+    }
+  ],
+  "pagination": {
+    "total": 6,
+    "per_page": 10,
+    "current_page": 1,
+    "last_page": 1,
+    "from": 1,
+    "to": 6
+  }
+}

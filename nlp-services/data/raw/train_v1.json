@@ -2,20 +2,18 @@
     "metadata": {
       "source": "APIs municipales",
       "ultima_actualizacion": "2025-07-08",
-      "num_categorias": 6,          
-      "num_subcategorias": 12,
+      "num_categorias": 8,          
+      "num_subcategorias": 22,
       "version": 1
     },
     "datos": [
       {
         "id": 1,
         "categoria": "ACTIVIDAD ECONÓMICA Y PUBLICIDAD",
-        
-        "preguntas": [  ],
         "subcategorias": [
             {
-                "id": 5,
-                "nombre": "LICENCIA DE FUNCIONAMIENTO POR ACTIVIDAD ECONÓMICA",
+                "id": 15,
+                "nombre": "LICENCIA DE FUNCIONAMIENTO POR ACTIVIDAD ECONÓMICA.",
                 "preguntas": [
                         "¿Qué necesito para abrir un taller mecánico?",
                         "Requisitos para licencia de funcionamiento de restaurante",
@@ -120,7 +118,7 @@
                 ]  
           },  
           {
-            "id": 5,
+            "id": 16,
             "nombre": "REGISTRO DE PUBLICIDAD PERMANENTE",
             "preguntas": [
                 "¿Cómo registro un banner publicitario para mi negocio?",
@@ -228,7 +226,7 @@
               ] 
           },
           {
-            "id": 6,
+            "id": 17,
             "nombre": "REGISTRO DE PUBLICIDAD EVENTUAL",
             "preguntas": [
                 "¿Cómo registro un pasacalle para un evento temporal?",
@@ -336,8 +334,8 @@
             ]
           },
           {
-            "id": 5,
-            "nombre":"RENOVACIÓN DE LA LICENCIA DE FUNCIONAMIENTO",
+            "id": 18,
+            "nombre":"RENOVACIÓN DE LICENCIAS DE FUNCIONAMIENTO",
             "preguntas": [
                 "¿Cómo renuevo mi licencia de funcionamiento que vence cada dos años?",
                 "Pasos para la renovación de la licencia de funcionamiento",
@@ -395,7 +393,7 @@
             ]  
           },
           {
-            "id": 5,
+            "id": 19,
             "nombre": "MODIFICACIÓN DE DATOS DE ACTIVIDAD ECONÓMICA",
             "preguntas": [
                 "¿Cómo cambio la actividad económica registrada en mi licencia?",
@@ -454,7 +452,7 @@
           
           },
           {
-            "id": 5,
+            "id": 22,
             "nombre": "REGISTRO DE PUNTOS DE VENTA EVENTUALES (KERMES, FERIAS, ETC.)",
             "preguntas": [
                 "¿Cómo obtengo permiso para vender en una feria municipal?",
@@ -511,7 +509,7 @@
             ]  
           },
           {
-            "id": 5,
+            "id": 60,
             "nombre": "CIERRE DE ACTIVIDAD ECONÓMICA",
             "preguntas": [
                 "¿Cómo doy de baja mi licencia de funcionamiento?",
@@ -575,11 +573,9 @@
       {
         "id": 2,
         "categoria": "VEHÍCULOS",
-        
-        
         "subcategorias": [
           {
-            "id": 1,
+            "id": 43,
             "nombre": "CAMBIO DE RADICATORIA",
             "preguntas": [
                 "¿Cómo traslado la radicatoria de mi auto a El Alto?",
@@ -637,7 +633,7 @@
             ]  
           },
           {
-            "id": 2,
+            "id": 44,
             "nombre": "DESCUENTO SERVICIO PÚBLICO VEHÍCULOS",
             "preguntas": [
                 "¿Cómo obtengo el 50 % de descuento para vehículo de transporte público?",
@@ -694,7 +690,7 @@
             ]
           },
           {
-            "id": 3,
+            "id": 45,
             "nombre": "DUPLICADO DE PLACA",
             "preguntas": [
                 "¿Cómo solicito un duplicado de placa por pérdida?",
@@ -752,8 +748,8 @@
             ]
           },
           {
-            "id": 4,
-            "nombre": "DUPLICADO RUA 03 Y/O CRPVA",
+            "id": 46,
+            "nombre": "DUPLICADO RUA 03 Y/O CRPVA (CERTIFICADO DE REGISTRO DE PROPIEDAD DE VEHÍCULO AUTOMOTOR)",
             "preguntas": [
                 "¿Cómo tramito duplicado del CRPVA?",
                 "Requisitos para duplicado de RUA 03 perdido",
@@ -808,8 +804,8 @@
             ]
           },
           {
-            "id": 5,
-            "nombre": "INSCRIPCIÓN IMPORTACIÓN DIRECTA VEHÍCULO/MOTOCICLETA",
+            "id": 47,
+            "nombre":"INSCRIPCIÓN IMPORTACIÓN DIRECTA VEHÍCULO/MOTOCICLETA",
             "preguntas": [
                 "¿Cómo inscribo un vehículo importado directamente por Aduana?",
                 "Requisitos para registrar moto importada sin intermediario",
@@ -866,7 +862,7 @@
             ]
           },
           {
-            "id": 6,
+            "id": 48,
             "nombre": "INSCRIPCIÓN CON FACTURA COMERCIAL VEHÍCULO/MOTOCICLETA",
             "preguntas": [
                 "¿Cómo registro un vehículo comprado a una casa comercial?",
@@ -922,7 +918,7 @@
             ]
           },
           {
-            "id": 7,
+            "id": 49,
             "nombre": "MODIFICACIÓN DE DATOS TÉCNICOS",
             "preguntas": [
                 "¿Cómo registro el cambio de motor de mi vehículo?",
@@ -984,11 +980,9 @@
       {
         "id": 3,
         "categoria": "INMUEBLES",
-        "aliases": ["lotes", "terrenos", "propiedad"],
-        "preguntas": [],
         "subcategorias": [
           {
-            "id":1,
+            "id":23,
             "nombre": "EMPADRONAMIENTO DE BIENES INMUEBLES POR POSESIÓN",
             "preguntas": [
                 "¿Cómo empadrono un lote donde vivo sin papeles?",
@@ -1046,7 +1040,7 @@
             ]
           },
           {
-            "id": 2,
+            "id": 24,
             "nombre": "EMPADRONAMIENTO DE BIENES POR ADJUDICACIÓN JUDICIAL",
             "preguntas": [
                 "¿Cómo empadrono un inmueble adjudicado por sentencia judicial?",
@@ -1102,7 +1096,7 @@
             ]
           },
           {
-            "id": 3,
+            "id": 25,
             "nombre": "EMPADRONAMIENTO DE BIENES POR CAMBIO DE JURISDICCIÓN",
             "preguntas": [
                 "¿Cómo empadrono mi lote si pagué impuestos en otro municipio?",
@@ -1161,13 +1155,11 @@
         ]
       },
       {
-        "id": 4,
-        "categoria": "ZONIFICACIÓN, PLANIMETRÍA Y CERTIFICACIONES URBANAS",
-        
-        
+        "id": 5,
+        "categoria": "ADMINISTRACIÓN TERRITORIAL",
         "subcategorias": [
-          {
-            "id": 1,
+          { 
+            "id": 29,
             "nombre": "ZONIFICACIÓN Y REZONIFICACIÓN",
             "preguntas": [
                 "¿Cómo solicito cambio de zonificación para mi terreno?",
@@ -1223,8 +1215,8 @@
             ]  
           },
           {
-            "id": 2,
-            "nombre": "VISADO Y CERTIFICACIÓN PARA LEY 343",
+            "id": 30,
+            "nombre": "VISADO Y CERTIFICACIÓN PARA LEY 3436",
             "preguntas": [
                 "¿Qué es la Ley 343 y cómo obtengo el visado de plano?",
                 "Pasos para conseguir la Resolución Técnica Administrativa (RTA)",
@@ -1278,8 +1270,8 @@
             ]
           },
           {
-            "id": 3,
-            "nombre": "VISADO DE LOTE Y CERTIFICACIÓN DDRR ≥ 1000 m²",
+            "id": 31,
+            "nombre": "VISADO DE LOTE Y CERTIFICACIÓN PARA DERECHOS REALES SUPERFICIES MAYOR O IGUAL A 1000,00 M2",
             "preguntas": [
                 "¿Cómo obtengo visado de lote de más de 1000 m² para DDRR?",
                 "Requisitos para certificado de superficie mayor a 1000 m²",
@@ -1334,8 +1326,8 @@
             ]
           },
           {
-            "id": 4,
-            "nombre": "RESOLUCIÓN MUNICIPAL DE NOMINACIÓN DE CALLES Y AVENIDAS",
+            "id": 37,
+            "nombre":  "RESOLUCIÓN MUNICIPAL DE NOMINACIÓN DE CALLES Y AVENIDAS",
             "preguntas": [
                 "¿Cómo obtengo la resolución para nombrar una nueva calle?",
                 "Requisitos para nominación de avenida con planimetría aprobada",
@@ -1389,7 +1381,7 @@
             ]
           },
           {
-            "id": 5,
+            "id": 39,
             "nombre": "CERTIFICACIÓN DE NÚMERO DE DOMICILIO",
             "preguntas": [
                 "¿Cómo obtengo certificado de número de puerta?",
@@ -1445,7 +1437,7 @@
             ]
           },
           {
-            "id": 6,
+            "id": 267,
             "nombre": "CERTIFICACIÓN DE LEGALIZACIÓN DE LOTE",
             "preguntas": [
                 "¿Cómo obtengo certificación de legalización de mi lote?",
@@ -1504,13 +1496,11 @@
         ]
       },
       {
-        "id": 5,
-        "categoria": "DISCAPACIDAD – BENEFICIOS Y TRÁMITES",
-        
-        
+        "id": 7,
+        "categoria": "DISCAPACIDAD",
         "subcategorias": [
           {
-            "id": 1,
+            "id": 228,
             "nombre": "CALIFICACIÓN DE DISCAPACIDAD",
             "preguntas": [
                 "¿Cómo obtengo la calificación de discapacidad oficialmente?",
@@ -1567,7 +1557,7 @@
             ]  
           },
           {
-            "id": 2,
+            "id": 250,
             "nombre": "OBTENER EL CARNET DE DISCAPACIDAD",
             "preguntas": [
                 "¿Cómo saco el carnet de discapacidad en El Alto?",
@@ -1624,7 +1614,7 @@
             ]
           },
           {
-            "id": 3,
+            "id": 251,
             "nombre": "OBTENCIÓN DE INFORME MÉDICO",
             "preguntas": [
                 "¿Cómo solicito el informe médico de discapacidad?",
@@ -1680,7 +1670,7 @@
             ]  
           },
           {
-            "id": 4,
+            "id": 252,
             "nombre": "REALIZAR COBRO DEL BONO MENSUAL DE DISCAPACIDAD",
             "preguntas": [
                 "¿Cómo cobro el bono mensual de discapacidad de 250 Bs?",
@@ -1735,7 +1725,7 @@
             ]  
           },
           {
-            "id": 5,
+            "id": 253,
             "nombre": "PAGO A DOMICILIO A PERSONA CON DISCAPACIDAD",
             "preguntas": [
                 "¿Cómo solicito que me paguen el bono a domicilio?",
@@ -1791,7 +1781,7 @@
             ]  
           },
           {
-            "id": 6,
+            "id": 266,
             "nombre": "CAMBIO DE MUNICIPIO",
             "preguntas": [
                 "¿Cómo hago cambio de municipio para cobrar el bono de discapacidad?",
@@ -1850,13 +1840,11 @@
         ]
       },
       {
-        "id": 6,
+        "id": 8,
         "categoria": "VIALIDAD",
-        
-        
         "subcategorias": [
           {
-            "id": 1,
+            "id": 34,
             "nombre": "ELABORACIÓN Y/O APROBACIÓN DE TRAZOS VIALES MEDIANTE RESOLUCIÓN MUNICIPAL",
             "preguntas": [
                 "¿Cómo solicito la aprobación del trazo vial de una nueva avenida?",

@@ -1,0 +1,55 @@
+{
+  "success": true,
+  "procedures": [
+    {
+      "id": 43,
+      "nombre_tramite": "CAMBIO DE RADICATORIA",
+      "descripcion_tramite": "CAMBIO DE RADICACIÓN DEL VEHÍCULO DE UN DETERMINADO GOBIERNO MUNICIPAL A OTRO, (EN ESTE CASO DE CUALQUIER MUNICIPIO AL MUNICIPIO DE EL ALTO)",
+      "imagen_tramite": "http://ciudadania.elalto.gob.bo/storage/images_procedures/1727363317_66f578f5db73d.png"
+    },
+    {
+      "id": 44,
+      "nombre_tramite": "DESCUENTO SERVICIO PÚBLICO VEHÍCULOS",
+      "descripcion_tramite": "ES UN BENEFICIO DEL 50% DE DESCUENTO DEL IMPUESTO POR EL SERVICIO DE PASAJEROS Y CARGA",
+      "imagen_tramite": "http://ciudadania.elalto.gob.bo/storage/images_procedures/1727974774_66fecd769b98b.png"
+    },
+    {
+      "id": 45,
+      "nombre_tramite": "DUPLICADO DE PLACA",
+      "descripcion_tramite": "SE TRATA DEL DUPLICADO DE LA PLACA, EL CUAL SE LO REALIZA POR DETERIORO, PÉRDIDA O ROBO",
+      "imagen_tramite": "http://ciudadania.elalto.gob.bo/storage/images_procedures/1727974798_66fecd8e6cffd.png"
+    },
+    {
+      "id": 46,
+      "nombre_tramite": "DUPLICADO RUA 03 Y/O CRPVA (CERTIFICADO DE REGISTRO DE PROPIEDAD DE VEHÍCULO AUTOMOTOR)",
+      "descripcion_tramite": "ES EL DUPLICADO DEL CRPVA",
+      "imagen_tramite": "http://ciudadania.elalto.gob.bo/storage/images_procedures/1727974725_66fecd4599d0f.png"
+    },
+    {
+      "id": 47,
+      "nombre_tramite": "INSCRIPCIÓN IMPORTACIÓN DIRECTA VEHÍCULO/MOTOCICLETA",
+      "descripcion_tramite": "ES EL REGISTRO DE VEHÍCULOS IMPORTADOS POR LA ADUANA NACIONAL",
+      "imagen_tramite": "http://ciudadania.elalto.gob.bo/storage/images_procedures/1727974766_66fecd6e3c18f.png"
+    },
+    {
+      "id": 48,
+      "nombre_tramite": "INSCRIPCIÓN CON FACTURA COMERCIAL VEHÍCULO/MOTOCICLETA",
+      "descripcion_tramite": "ES EL REGISTRO DE VEHÍCULOS IMPORTADOS POR UNA CASA COMERCIAL",
+      "imagen_tramite": "http://ciudadania.elalto.gob.bo/storage/images_procedures/1727974754_66fecd621d986.png"
+    },
+    {
+      "id": 49,
+      "nombre_tramite": "MODIFICACIÓN DE DATOS TÉCNICOS",
+      "descripcion_tramite": "ES EL TRÁMITE EN EL CUAL SE MODIFICA EL MOTOR, COLOR Y OTROS DATOS TÉCNICOS QUE SE ENCUENTRAN REGISTRADOS EN EL RUA 03 Y/O CRPVA",
+      "imagen_tramite": "http://ciudadania.elalto.gob.bo/storage/images_procedures/1727974819_66fecda3498b1.png"
+    }
+  ],
+  "pagination": {
+    "total": 7,
+    "per_page": 10,
+    "current_page": 1,
+    "last_page": 1,
+    "from": 1,
+    "to": 7
+  }
+}

@@ -5,6 +5,9 @@
 @tailwind components;
 @tailwind utilities;
 
+#app {
+  display: flex;
+}
 /* ───────────────────────────────────────────────
    2. VARIABLES Y CAPA BASE
 ─────────────────────────────────────────────── */

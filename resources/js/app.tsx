@@ -5,8 +5,9 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
 import { initializeTheme } from './hooks/use-appearance';
 
-// Agrega esta línea en app.tsx//
-//import '../css/chatbot.css';
+// ✅ 1. IMPORTA EL COMPONENTE SILBER AQUÍ
+import Silber from './components/Silber';
+
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({
@@ -15,13 +16,19 @@ createInertiaApp({
     setup({ el, App, props }) {
         const root = createRoot(el);
 
-        root.render(<App {...props} />);
+        // ✅ 2. MODIFICA EL RENDER PARA INCLUIR SILBER
+        // La variable 'App' aquí es tu página actual (ej. Chatbot.tsx).
+        // Al poner <Silber /> al lado, se mostrará en todas las páginas.
+        root.render(
+            <>
+                <Silber />
+                <App {...props} />
+            </>
+        );
     },
     progress: {
         color: '#4B5563',
     },
-
-   
 });
 
 // This will set light / dark mode on load...

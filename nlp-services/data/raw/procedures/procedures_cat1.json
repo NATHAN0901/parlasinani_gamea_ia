@@ -1,0 +1,55 @@
+{
+  "success": true,
+  "procedures": [
+    {
+      "id": 15,
+      "nombre_tramite": "LICENCIA DE FUNCIONAMIENTO POR ACTIVIDAD ECONÓMICA.",
+      "descripcion_tramite": "ES EL REGISTRO DE TODA ACTIVIDAD ECONÓMICA PARA LA EMISIÓN DE LA LICENCIA DE FUNCIONAMIENTO.",
+      "imagen_tramite": "http://ciudadania.elalto.gob.bo/storage/images_procedures/1727970400_66febc6018671.png"
+    },
+    {
+      "id": 16,
+      "nombre_tramite": "REGISTRO DE PUBLICIDAD PERMANENTE",
+      "descripcion_tramite": "ES EL REGISTRO DE LA PUBLICIDAD EXPUESTA A LA VISTA DEL PÚBLICO",
+      "imagen_tramite": "http://ciudadania.elalto.gob.bo/storage/images_procedures/1727970837_66febe154b42c.png"
+    },
+    {
+      "id": 17,
+      "nombre_tramite": "REGISTRO DE PUBLICIDAD EVENTUAL",
+      "descripcion_tramite": "REGISTRO DE LA PUBLICIDAD EVENTUAL, POR EJEMPLO, PASACALLES, VOLANTES, AFICHES, ISLAS, BANDERAS, BADEROLAS, GLOBOL INFLABLES, ETC",
+      "imagen_tramite": "http://ciudadania.elalto.gob.bo/storage/images_procedures/1727970826_66febe0a7ad39.png"
+    },
+    {
+      "id": 18,
+      "nombre_tramite": "RENOVACIÓN DE LICENCIAS DE FUNCIONAMIENTO",
+      "descripcion_tramite": "RENOVACIÓN DE LA LICENCIA DE FUNCIONAMIENTO CONSIDERANDO QUE SOLO TIENE UNA VIGENCIA DE DOS AÑOS",
+      "imagen_tramite": "http://ciudadania.elalto.gob.bo/storage/images_procedures/1727970432_66febc803fb5c.png"
+    },
+    {
+      "id": 19,
+      "nombre_tramite": "MODIFICACIÓN DE DATOS DE ACTIVIDAD ECONÓMICA",
+      "descripcion_tramite": "CUANDO EL CONTRIBUYENTE CAMBIA DE ACTIVIDAD ECONÓMICA Y/O DIRECCIÓN",
+      "imagen_tramite": "http://ciudadania.elalto.gob.bo/storage/images_procedures/1727970922_66febe6ac53ca.png"
+    },
+    {
+      "id": 22,
+      "nombre_tramite": "REGISTRO DE PUNTOS DE VENTA EVENTUALES (KERMES, FERIAS, ETC.)",
+      "descripcion_tramite": "ES LA AUTORIZACIÓN QUE EL MUNICIPIO OTORGA A ACTIVIDADES Y PUBLICIDAD EVENTUAL.",
+      "imagen_tramite": "http://ciudadania.elalto.gob.bo/storage/images_procedures/1727971218_66febf929f887.png"
+    },
+    {
+      "id": 60,
+      "nombre_tramite": "CIERRE DE ACTIVIDAD ECONÓMICA",
+      "descripcion_tramite": "CONSISTE EN LA BAJA Y/O RETIRO DE LA PUBLICIDAD",
+      "imagen_tramite": "http://ciudadania.elalto.gob.bo/storage/images_procedures/1727971295_66febfdf0ff49.png"
+    }
+  ],
+  "pagination": {
+    "total": 7,
+    "per_page": 10,
+    "current_page": 1,
+    "last_page": 1,
+    "from": 1,
+    "to": 7
+  }
+}

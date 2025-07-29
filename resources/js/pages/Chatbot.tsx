@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import { Sun, Moon, SendHorizonal } from "lucide-react";
-import Logo1 from "@/pages/assets/logo1.png";
+import Logo1 from "@/pages/assets/plantilla-logotipo-computadora-profesional.png";
 
 /* API REST del municipio (categorías, trámites, requisitos) */
 import {
@@ -23,108 +23,124 @@ type Category  = { id: number; nombre_categoria: string };
 type Procedure = { id: number; nombre_tramite: string };
 type Requirement = { id: number; nombre_requisito: string };
 
-/* ─────────────────────── Hooks utilitarios ───────────────────── */
-function useDarkMode(init = false) {
-  const [dark, setDark] = useState(
-    () => localStorage.getItem("darkMode") === "true" || init,
-  );
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", dark);
-    localStorage.setItem("darkMode", JSON.stringify(dark));
-  }, [dark]);
-  return [dark, setDark] as const;
-}
-
-function useRipple() {
-  return useCallback((e: MouseEvent<HTMLButtonElement>) => {
-    const btn = e.currentTarget;
-    const d   = Math.max(btn.clientWidth, btn.clientHeight);
-    const s   = document.createElement("span");
-    Object.assign(s.style, {
-      width:  `${d}px`,
-      height: `${d}px`,
-      left:   `${e.clientX - btn.getBoundingClientRect().left - d / 2}px`,
-      top:    `${e.clientY - btn.getBoundingClientRect().top  - d / 2}px`,
-    });
-    s.className = "ripple";
-    btn.querySelector(".ripple")?.remove();
-    btn.appendChild(s);
-  }, []);
-}
-
-function useScrollBottom(deps: unknown[]) {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => ref.current?.scrollIntoView({ behavior: "smooth" }), deps);
-  return ref;
-}
-
-/* ────────────────────── Base de FAQ simple ───────────────────── */
-const faqDB = [
-  { question: "horario",    response: "Atención: lun‑vie 08 h – 16 h." },
-  { question: "contacto",   response: "Tel 123‑4567 · contacto@municipio.com" },
-  { question: "ubicación",  response: "Calle Principal #123, Centro" },
-];
-
 /* ─────────────────── Componente principal ───────────────────── */
 export default function Chatbot() {
-  /* UI y helpers */
+  /* UI */
   const [dark, setDark] = useDarkMode();
-  const ripple          = useRipple();
+  const ripple = useRipple();
 
-  /* Estado del chat */
+  /* Chat */
   const [messages, setMessages] = useState<Message[]>([
-    { text: "¡Hola! Soy tu asistente virtual municipal. ¿En qué puedo ayudarte?", sender: "bot" },
-    { text: 'Escribe "categorías" para trámites o "preguntas" para FAQ.',        sender: "bot" },
+    {
+      text : "¡Hola! Soy tu asistente virtual municipal. ¿En qué puedo ayudarte?",
+      sender: "bot",
+    },
+    { text : 'Escribe "categorías" para trámites o "preguntas" para FAQ.',
+      sender: "bot",
+    },
   ]);
   const [input,  setInput]  = useState("");
   const [typing, setTyping] = useState(false);
 
-  /* Última predicción NLP (debug) */
-  const [lastNlp, setLastNlp] = useState<string | null>(null);
-
-  /* Flujo de menú */
-  const [step, setStep] = useState<"idle"|"categories"|"procedures"|"faq">("idle");
+  /* Datos cargados dinámicamente */
   const [cats,       setCats]       = useState<Category[]>([]);
   const [procedures, setProcedures] = useState<Procedure[]>([]);
   const [catSel,     setCatSel]     = useState<Category|null>(null);
 
   const endRef = useScrollBottom([messages]);
 
-  /* Helpers texto → número */
-  const extractNumber = (t: string) => {
-    const m = t.match(/\d+/); return m ? Number(m[0]) : null;
+  /* ─────────────── FSM ─────────────── */
+  type Step =
+    | "idle"
+    | "listingCats"
+    | "listingProcs"
+    | "faq"
+    | "nlpAnswer";          // acaba de responder la rama NLP
+
+  const [step, setStep] = useState<Step>("idle");
+  const goto = (s: Step) => {
+    setStep(s);
+    if (s === "idle") {
+      setCatSel(null);
+      setProcedures([]);
+    }
   };
 
-  const searchFAQ = (q: string) => {
+  /* ───────── utilidades ───────── */
+  const extractNumber = (t:string) => {
+    const m = t.match(/\d+/);
+    return m ? Number(m[0]) : null;
+  };
+
+  // Preguntas frecuentes (FAQ) de ejemplo
+  const faqDB: { question: string; response: string }[] = [
+    { question: "¿cuáles son los horarios de atención?", response: "El horario de atención es de lunes a viernes de 8:00 a 16:00." },
+    { question: "¿dónde se encuentra la municipalidad?", response: "La municipalidad se encuentra en la Plaza Principal, Av. Central #123." },
+    // Agrega más preguntas y respuestas aquí según sea necesario
+  ];
+
+  const searchFAQ = (q:string) => {
     const clean = q.toLowerCase().trim();
     return (
       faqDB.find(f => f.question === clean)?.response ??
-      faqDB.find(f => clean.includes(f.question))?.response ??
-      null
+      faqDB.find(f => clean.includes(f.question))?.response ?? null
     );
   };
 
-  const formatBot = (txt: string) =>
-    txt.split("\n").map((l,i)=><p key={i} className="whitespace-pre-wrap">{l}</p>);
+  const formatBot = (txt:string) =>
+    txt.split("\n").map((l,i)=>
+      <p key={i} className="whitespace-pre-wrap">{l}</p>);
 
-  const resetFlow = () => {
-    setStep("idle");
-    setCatSel(null);
-    setProcedures([]);
-  };
+  /* ─────── Respuesta NLP aislada ─────── */
+  async function handleNlp(catName: string) {
+    let bot = `Categoría detectada: **${catName}**`;
 
-  /* ──────────── Envío de mensaje ──────────── */
-  async function onSubmit(e: FormEvent) {
-    e.preventDefault();
-    if (!input.trim() || typing) return;
+    /* asegura cats[] */
+    let cat =
+      cats.find(c => c.nombre_categoria === catName) ??
+      (await (async () => {
+        const full = await getCategories();
+        setCats(full);
+        return full.find((c: Category) => c.nombre_categoria === catName);
+      })());
 
-    /* Añade mensaje del usuario */
-    const userMsg = input;
-    setMessages(p => [...p, { text:userMsg, sender:"user" }]);
-    setInput(""); setTyping(true);
+    if (!cat) return bot;              // sin coincidencia: solo devuelve línea
 
-    /* 1️⃣  NLP: /predict */
-    let nlpCat: string | null = null;
+    const procs = (await getProceduresByCategory(String(cat.id))).procedures;
+    setProcedures(procs);
+    setCatSel(cat);
+
+    if (procs.length) {
+      bot +=
+        "\n\nTrámites:\n" +
+        procs.map((p: Procedure, i: number) => `${i+1}. ${p.nombre_tramite}`).join("\n");
+    }
+    return bot;
+  }
+
+ /* ─────────────── envío ─────────────── */
+async function onSubmit(e: FormEvent) {
+  e.preventDefault();
+  if (!input.trim() || typing) return;
+
+  const userMsg  = input;
+  const lowMsg   = userMsg.toLowerCase();
+  const isCmdCat = lowMsg.includes("categorias");
+  const isCmdFAQ = lowMsg.includes("preguntas");
+
+  setMessages(p => [...p, { text:userMsg, sender:"user" }]);
+  setInput("");
+  setTyping(true);
+
+  /*  Si la petición es un comando (“categorias” / “preguntas”)    ──
+      o ya estamos dentro de un sub‑menú, *omitimos* el clasificador NLP.
+  */
+  const skipNlp =
+    isCmdCat || isCmdFAQ ||
+    ["listingCats","listingProcs","faq"].includes(step);
+
+  /* 1️⃣ Clasificador NLP (solo cuando procede) */
+  if (!skipNlp) {
     try {
       const res = await fetch("http://localhost:9000/predict", {
         method : "POST",
@@ -132,96 +148,99 @@ export default function Chatbot() {
         body   : JSON.stringify({ text: userMsg }),
       });
       if (res.ok) {
-        const data = await res.json() as { categoria: string };
-        nlpCat = data.categoria;
-        setLastNlp(nlpCat);
+        const { categoria } = (await res.json()) as { categoria: string };
+        const bot = await handleNlp(categoria);
+
+        goto("nlpAnswer");
+        await new Promise(r => setTimeout(r,650));
+        setMessages(p => [...p, { text: bot, sender:"bot" }]);
+        setTyping(false);
+        return;                       // ← no se ejecuta FSM
       }
-    } catch { /* silencioso */ }
-
-    /* 2️⃣  Flujo tradicional */
-    let bot = nlpCat ? `Categoría detectada: **${nlpCat}**` : "";
-
-    const faq = searchFAQ(userMsg);
-    if (faq) bot += (bot?"\n\n":"") + faq;
-    else {
-      try {
-        /* 2.1 Listar categorías */
-        if (userMsg.toLowerCase().includes("categorias") || step==="idle") {
-          const db = await getCategories(); setCats(db);
-          bot += (bot?"\n\n":"") +
-            (db.length
-              ? "Categorías:\n" + db.map((c,i)=>`${i+1}. ${c.nombre_categoria}`).join("\n")
-              : "No hay categorías registradas.");
-          setStep(db.length?"categories":"idle");
-        }
-        /* 2.2 Seleccionar categoría */
-        else if (step==="categories") {
-          const idx = extractNumber(userMsg);
-          if (!idx || idx<1 || idx>cats.length)
-            bot += (bot?"\n\n":"") + `Número inválido (1‑${cats.length}).`;
-          else {
-            const cat = cats[idx-1]; setCatSel(cat);
-            const procs = (await getProceduresByCategory(String(cat.id))).procedures;
-            setProcedures(procs);
-            bot += (bot?"\n\n":"") +
-              (procs.length
-                ? `Trámites en "${cat.nombre_categoria}":\n` +
-                  procs.map((p,i)=>`${i+1}. ${p.nombre_tramite}`).join("\n")
-                : `No hay trámites en "${cat.nombre_categoria}".`);
-            setStep(procs.length?"procedures":"idle");
-          }
-        }
-        /* 2.3 Seleccionar trámite */
-        else if (step==="procedures") {
-          const idx = extractNumber(userMsg);
-          if (!idx || idx<1 || idx>procedures.length)
-            bot += (bot?"\n\n":"") + `Número inválido (1‑${procedures.length}).`;
-          else {
-            const proc = procedures[idx-1];
-            const raw  = await getRequirementsByProcedure(String(proc.id));
-            const reqs: Requirement[] = Array.isArray(raw) ? raw : Object.values(raw).flat();
-            bot += (bot?"\n\n":"") +
-              (reqs.length
-                ? `Requisitos de "${proc.nombre_tramite}":\n` +
-                  reqs.map(r=>`• ${r.nombre_requisito}`).join("\n")
-                : "No hay requisitos registrados.");
-            resetFlow();
-          }
-        }
-        /* 2.4 FAQ list */
-        else if (userMsg.toLowerCase().includes("preguntas")) {
-          bot += (bot?"\n\n":"") +
-            (faqDB.length
-              ? "Preguntas frecuentes:\n" + faqDB.map(f=>`• ${f.question}`).join("\n")
-              : "No hay preguntas registradas.");
-          setStep("faq");
-        }
-        /* 2.5 Fallback */
-        else {
-          bot += (bot?"\n\n":"") +
-            'No entiendo. Escribe "categorías" o "preguntas".';
-          resetFlow();
-        }
-      } catch {
-        bot = (bot?"\n\n":"") + "Lo siento, ocurrió un error en el servidor.";
-        resetFlow();
-      }
-    }
-
-    /* Delay de “escribiendo…” */
-    await new Promise(r=>setTimeout(r,650));
-    setMessages(p => [...p, { text: bot, sender:"bot" }]);
-    setTyping(false);
+    } catch {/* si falla, sigue con FSM */}
   }
 
-  /* Esc = limpiar */
+  /* 2️⃣ FSM tradicional */
+  let bot = "";
+  try {
+    switch (step) {
+      /* ───────── estado idle ───────── */
+      case "idle":
+        if (isCmdCat) {                               // listar categorías
+          const db = await getCategories();
+          setCats(db);
+          bot = db.length
+            ? "Categorías:\n" +
+              db.map((c,i)=>`${i+1}. ${c.nombre_categoria}`).join("\n")
+            : "No hay categorías registradas.";
+          goto("listingCats");
+        } else if (isCmdFAQ) {                        // listar FAQ
+          bot = faqDB.length
+            ? "Preguntas frecuentes:\n" +
+              faqDB.map(f=>`• ${f.question}`).join("\n")
+            : "No hay preguntas registradas.";
+          goto("faq");
+        } else {
+          bot = searchFAQ(userMsg) ??
+            'No entiendo. Escribe "categorías" o "preguntas".';
+        }
+        break;
+
+      /* ───────── dentro de lista de categorías ───────── */
+      case "listingCats": {
+        const idx = extractNumber(userMsg);
+        if (!idx || idx<1 || idx>cats.length) {
+          bot = `Número inválido (1‑${cats.length}).`;
+          break;
+        }
+        const cat = cats[idx-1];
+        setCatSel(cat);
+        const procs = (await getProceduresByCategory(String(cat.id))).procedures;
+        setProcedures(procs);
+        bot = procs.length
+          ? `Trámites en "${cat.nombre_categoria}":\n` +
+            procs.map((p,i)=>`${i+1}. ${p.nombre_tramite}`).join("\n")
+          : `No hay trámites en "${cat.nombre_categoria}".`;
+        goto("listingProcs");
+        break;
+      }
+
+      /* ───────── dentro de lista de trámites ───────── */
+      case "listingProcs": {
+        const idx = extractNumber(userMsg);
+        if (!idx || idx<1 || idx>procedures.length) {
+          bot = `Número inválido (1‑${procedures.length}).`;
+          break;
+        }
+        const proc = procedures[idx-1];
+        const raw  = await getRequirementsByProcedure(String(proc.id));
+        const reqs: Requirement[] =
+          Array.isArray(raw) ? raw : Object.values(raw).flat();
+        bot = reqs.length
+          ? `Requisitos de "${proc.nombre_tramite}":\n` +
+            reqs.map(r=>`• ${r.nombre_requisito}`).join("\n")
+          : "No hay requisitos registrados.";
+        goto("idle");
+        break;
+      }
+    }
+  } catch {
+    bot = "Lo siento, ocurrió un error en el servidor.";
+    goto("idle");
+  }
+
+  await new Promise(r => setTimeout(r,650));
+  setMessages(p => [...p, { text: bot, sender:"bot" }]);
+  setTyping(false);
+}
+
+  /* Esc → limpiar input */
   useEffect(() => {
     const h = (e:KeyboardEvent)=> e.key==="Escape" && setInput("");
     window.addEventListener("keydown",h);
     return ()=>window.removeEventListener("keydown",h);
   }, []);
-
-  /* ───────────────────────── Hasta aquí, antes del return JSX ── */
+/* ───────────────────────── Hasta aquí, antes del return JSX ── */
 
   /* ════════════════════════════════════════════════════════════
      6.  Renderizado
@@ -264,7 +283,7 @@ export default function Chatbot() {
 
         {/* Ícono Dark/Light */}
         <button
-          onClick={() => setDark((d) => !d)}
+          onClick={() => setDark((d: boolean) => !d)}
           className="rounded-full p-2 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white"
           aria-label="Cambiar tema"
         >
@@ -331,28 +350,7 @@ export default function Chatbot() {
           onChange={(e) => setInput(e.target.value)}
           placeholder="Escribe tu mensaje…"
           disabled={typing}
-          className="
-            /* ─── Medidas ─────────────────────────────── */
-            h-20                /* alto 80 px (tablet‑like) */
-            w-11/12 md:w-3/4    /* 92 % en móvil · 75 % en ≥768 px */
-            max-w-2xl           /* nunca pasa de 512 px */
-            mx-auto             /* centrado horizontal */
-
-            /* ─── Estilo visual ───────────────────────── */
-            rounded-full bg-glass
-            px-8 py-5 text-lg tracking-wide
-
-            /* Color adaptativo */
-            text-force-foreground
-            placeholder:text-center placeholder:text-sm placeholder:foreground/50
-            dark:placeholder:text-white/50
-
-            /* Accesibilidad & estados */
-            focus:outline-none focus:ring-1 focus:ring-accent-400
-            disabled:opacity-40
-          "
-        />
-
+          className="h-20 w-11/12 md:w-3/4 max-w-2xl mx-auto rounded-full bg-glass px-8 py-5 text-lg tracking-wide text-force-foreground placeholder:text-center placeholder:text-sm placeholder:foreground/50 dark:placeholder:text-white/50 focus:outline-none focus:ring-1 focus:ring-accent-400 disabled:opacity-40"/>
 
 
 
@@ -371,6 +369,44 @@ export default function Chatbot() {
   );
 }
 
+
+function useScrollBottom(deps: any[]) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, deps);
+  return ref;
+}
+
+function useDarkMode(): [boolean, (fn: (d: boolean) => boolean) => void] {
+  const [dark, setDarkState] = useState(() => {
+    if (typeof window !== "undefined") {
+      return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    if (dark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [dark]);
+
+  const setDark = useCallback((fn: (d: boolean) => boolean) => {
+    setDarkState(prev => fn(prev));
+  }, []);
+
+  return [dark, setDark];
+}
+
+// Simple ripple hook placeholder
+function useRipple() {
+  return () => {};
+}
 /* ------------------------------------------------------------------
    Fin — ~360 líneas, comentarios incluidos
 ------------------------------------------------------------------ */
