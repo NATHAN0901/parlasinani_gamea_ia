@@ -1,148 +1,392 @@
-/* ==================================================================
-   AURORA MINISTERIAL – Tropical Bloom Edition 🌺
-   ================================================================== */
+/* =================================================================
+   STATIC NEON IA THEME
+   ================================================================= */
+   @import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap");
 
-/* 1️⃣  CARGA DE FUENTE (sin cambios) */
-@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&display=swap');
+   :root{
+     --font-family:"Nunito",sans-serif;
+   
+     /* paleta multiprism (estática / sin animación) */
+     --bg-h1:#0f0d33;   /* violeta noche profundo */
+     --bg-h2:#0539b4;   /* azul eléctrico         */
+     --bg-h3:#00a9bc;   /* cian neón              */
+     --bg-h4:#1cdd60;   /* lima glow              */
+   
+     --surface:#ffffff;
+     --text:#09111a; /* contraste óptimo sobre vidrio claro */
+   
+     --glow-primary:#2aef6f;   /* acento IA */
+     --glow-lines:#82c6fd;     /* texto secundario */
+   
+     --radius-s:24px;
+     --radius-full:50%;
+     --sp-1:8px; --sp-2:16px; --sp-3:24px;
+   }
+   
+   /* ---------------- Animaciones base (solo micro, nada de color shifting) ---------------- */
+   @keyframes float   {0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+   @keyframes pulse   {0%,100%{filter:drop-shadow(0 0 0 rgba(0,0,0,0))}50%{filter:drop-shadow(0 0 12px var(--icon-glow))}}
+   @keyframes bounce  {0%,80%,100%{transform:translateY(0);opacity:.5}40%{transform:translateY(-6px);opacity:1}}
+   @keyframes scan    {to{left:140%}}
+   
+   /* -------------- Layout principal ----------------- */
+   html,body{margin:0;height:100%}
+   body{--sidebar-width:74px;background:#000}
+   body.sidebar-extended{--sidebar-width:250px}
+   #root{min-height:100%;display:flex}
+   
+   .main{
+     margin-left:var(--sidebar-width);
+     width:calc(100% - var(--sidebar-width));
+     min-height:100vh;display:flex;flex-direction:column;position:relative;
+     font-family:var(--font-family);color:var(--surface);overflow:hidden;
+   
+     /* >>> Fondo ESTÁTICO: no hay animaciones de color */
+     background:
+       radial-gradient(1200px 800px at -10% -20%, rgba(127,90,240,.25), transparent 60%),
+       radial-gradient(1000px 700px at 110% 0%, rgba(0,229,255,.22), transparent 60%),
+       linear-gradient(115deg, var(--bg-h1) 0%, #0a2cb4 33%, var(--bg-h2) 48%, var(--bg-h3) 70%, var(--bg-h4) 100%);
+     background-attachment: fixed;
+     transition:margin-left .35s,width .35s;
+   }
+   
+   /* patrón diagonal + NEURAL GRID */
+   .main::before{
+     content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+     background-image:
+       repeating-linear-gradient(135deg,transparent 0 6px,rgba(255,255,255,.05) 6px 10px);
+   }
+   .neural-grid{
+     position:absolute; inset:0; z-index:0; pointer-events:none;
+     background-image:
+       linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px),
+       linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px);
+     background-size: 22px 22px;
+     mix-blend-mode: overlay;
+     opacity: .18;
+   }
+   
+   /* ---------- Aurora blobs (estáticos, sin animación) ---------- */
+   .aurora-background{position:absolute;inset:0;z-index:0;overflow:hidden}
+   .aurora-shape{
+     position:absolute;width:45vmax;height:45vmax;border-radius:50%;filter:blur(120px);opacity:.22;
+     /* sin animation: colores y posiciones permanecen constantes */
+   }
+   .shape1{background:#ff1ea6;top:-15%;left:-10%}
+   .shape2{background:#00d6ff;bottom:-18%;right:-12%}
+   .shape3{background:#7f5af0;top:35%;left:60%}
+   
+   /* ---------- Top bar ---------- */
+   .nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:first baseline;
+    padding:var(--sp-2) var(--sp-3);
+    background:rgba(255,255,255,0.06);
+    -webkit-backdrop-filter:blur(14px);
+    backdrop-filter:blur(14px);border-bottom:1px solid rgba(255,255,255,.07);z-index:2
+  }
 
-/* 2️⃣  NUEVA PALETA */
-:root {
-  --font-family: 'Sora', sans-serif;
+  
+  /*es mi imagen logo */
+   .nav .brand img{
+    width:85px;
+    height:55px;
+    border-radius:var(--radius-4xl);
+    filter: drop-shadow(0 0 1px cyan);
+  }
+  /*mi icono user cabecera*/
+   .nav > img {
+    width: 45px;
+    height: 45px;
+    border-radius: var(--radius-full);
+    border: 2px solid var(--glow-primary);
+    
+   }
+   .nav .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;font-weight:800
+  }
+  /* logos secundarios de arriba en la barra*/
+  .nav .brand img.logo-secundario {
+    width:250px;
+    height:80px;
+    filter: drop-shadow(0 0 4px cyan);
+  }
+  .nav .brand img.logo-extra {
+    height: 42px;
+    width: 65px;
+    filter: drop-shadow(0 0 4px cyan);
+  }
+  
 
-  /* Fondo “noche tropical” */
-  --color-background: #0B1020;            /* azul marino ultraprofund */
-  --color-surface-glass: rgba(20, 26, 43, 0.5);
-  --color-border-glass: rgba(135, 148, 183, 0.18);
+   
+   /* ---------- Contenido ---------- */
+   .main-container{
+     flex:1;overflow-y:auto;padding:var(--sp-2) var(--sp-3) var(--sp-3);
+     max-width:1230px;width:100%;margin:0 auto;position:relative;z-index:1
+   }
+   .main-container::-webkit-scrollbar{display:none}
+   
+   .hero-section h1{
+     font-size:clamp(2.6rem,6vw,4.5rem);font-weight:800;line-height:1.1;margin:0;
+     text-shadow:0 0 30px rgba(255,255,255,.22), 0 0 80px rgba(63,255,131,.22);
+   }
+   .hero-section p{
+     font-size:clamp(1rem,2.8vw,1.3rem);margin-top:.6em;color:#e9f6ff;opacity:.9;max-width:52ch
+   }
+   
+   /* ---------- Tarjetas (4 por fila en desktop) ---------- */
+   .service-cards-grid{
+     display:grid; grid-template-columns:repeat(4,1fr);
+     gap:var(--sp-3); margin-block:var(--sp-3)
+   }
+   @media (max-width: 1100px){ .service-cards-grid{ grid-template-columns: repeat(2, 1fr); } }
+   @media (max-width: 560px){  .service-cards-grid{ grid-template-columns: 1fr; } }
+   
+   .service-card{
+     position:relative;padding:var(--sp-3);border-radius:var(--radius-s);
+     background:rgba(255,255,255,0.16); color:var(--text); cursor:pointer;
+    isolation:isolate; -webkit-user-select:none; user-select:none; transform-style:preserve-3d;
+     transition:transform .35s ease, box-shadow .25s ease, border-color .25s ease;
+     --h:var(--card-hue,200);
+     border:1px solid rgba(255,255,255,0.22);
+    -webkit-backdrop-filter:blur(18px);
+     backdrop-filter:blur(18px);
+     box-shadow:0 10px 30px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.08);
+     min-height:164px; display:flex; flex-direction:column; justify-content:flex-start;
+   }
+   .service-card:hover{ transform:translateY(-12px) rotateX(6deg) rotateY(-4deg) }
+   .service-card:focus-visible{
+     outline:none; border-color: rgba(63,255,131,.9);
+     box-shadow: 0 0 0 6px rgba(63,255,131,.25);
+   }
+   
+   /* glow ring */
+   .service-card::before{
+     content:""; position:absolute; inset:-3px; border-radius:inherit; opacity:.95; filter:blur(6px);
+     background:conic-gradient(from 180deg at 50% 50%,
+       hsl(var(--h) 100% 70%/0) 0 25%, hsl(var(--h) 100% 70%/.5) 55%, hsl(var(--h) 100% 70%/0) 80%);
+   }
+   /* scanline */
+   .service-card::after{
+     content:""; position:absolute; top:0; left:-100%; width:60%; height:100%;
+     background:linear-gradient(120deg,transparent 0%,hsl(var(--h)100% 85%/.18) 50%,transparent 100%);
+     transform:skewX(-20deg); animation:scan 4.2s infinite linear paused;
+   }
+   .service-card:hover::after{ animation-play-state:running }
+   
+   /* Icono con glow */
+   .card-icon-wrapper{
+     --icon-glow:hsl(var(--h) 100% 70%);
+     width:60px;height:60px;border-radius:var(--radius-full);background:#0f1540;
+     display:grid;place-items:center;margin-bottom:var(--sp-2);animation:pulse 3.8s ease-in-out infinite;
+     box-shadow:inset 0 1px 0 rgba(255,255,255,.25);
+   }
+   .card-icon-wrapper img{width:28px;height:28px;filter:brightness(0) invert(1)}
+   .service-card h3{font-size:1.22rem;font-weight:800;margin:.3em 0;color:#031427}
+   .service-card-description{font-size:.95rem;font-weight:600;line-height:1.5;color:#0f1b2a}
+   
+   /* ---------- Chips / atajos ---------- */
+   .quick-pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+   .pill{
+     padding:8px 12px;border:1px solid rgba(255,255,255,0.2);background:rgba(255,255,255,0.12);
+     border-radius:9999px;color:#031427;font-weight:800;cursor:pointer;
+     transition:transform .15s ease,box-shadow .15s ease, border-color .15s ease;
+   }
+   .pill:hover{transform:translateY(-2px); box-shadow:0 10px 28px rgba(0,0,0,.25)}
+   .pill:focus-visible{ outline:none; border-color: rgba(63,255,131,.9); box-shadow: 0 0 0 6px rgba(63,255,131,.25) }
+   
+   /* ---------- Search (hero) ---------- */
+   .search-box{
+     display:flex;align-items:center;gap:var(--sp-1);
+     padding:var(--sp-1) var(--sp-1) var(--sp-1) var(--sp-3);
+     background:rgba(255,255,255,0.16);border-radius:var(--radius-s);
+     border:2px solid transparent; transition:border .25s,box-shadow .25s;
+    -webkit-backdrop-filter:blur(12px);
+    backdrop-filter:blur(12px)
+   }
+   .search-box:focus-within{border-color:var(--glow-primary); box-shadow:0 0 22px rgba(63,255,131,.35)}
+   .search-box input{
+     flex:1;background:none;border:none;outline:none;font-size:1rem;font-weight:600;
+     color:#031427;min-width:60px
+   }
+   .search-box input::placeholder{color:var(--glow-lines);font-weight:400}
+   .icon-buttons{display:flex;align-items:center;gap:var(--sp-1)}
+   .icon-buttons button{
+     width:46px;height:46px;border-radius:var(--radius-full);border:none;flex-shrink:0;
+     background:#0f1540;display:grid;place-items:center;cursor:pointer; transition:transform .2s
+   }
+   .icon-buttons button:hover{transform:scale(1.08)}
+   .icon-buttons button:focus-visible{outline:none; box-shadow:0 0 0 4px rgba(0,229,255,.35)}
+   .icon-buttons img{width:22px;height:22px;filter:brightness(0) invert(1)}
+   .send-btn{background:linear-gradient(135deg, var(--bg-h3), var(--bg-h4)); color:#0b1220}
+   .send-btn:hover{box-shadow:0 0 20px var(--glow-primary)}
+   .send-btn:active{transform:scale(.93)}
+   
+   /* ===================== CHAT (modo conversación) ===================== */
+   .chat-wrapper{
+     position:relative;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22);
+    border-radius:var(--radius-s);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+     box-shadow:0 14px 40px rgba(0,0,0,.35);
+     display:flex;flex-direction:column;height:calc(100vh - 170px);
+   }
+   /* ================================================================
+   THEME — ROYAL VIOLET → AZURE (estático)
+   Aplica añadiendo la clase .theme-violet-azure al contenedor .main
+   ================================================================ */
+.main.theme-violet-azure{
+  /* Paleta base del fondo */
+  --bg-h1:#1a1240;  /* violet deep */
+  --bg-h2:#3b2db8;  /* royal violet */
+  --bg-h3:#1766ff;  /* electric blue */
+  --bg-h4:#2ed9ff;  /* azure/aqua */
 
-  /* Texto */
-  --color-text-primary: #F0F2F6;
-  --color-text-secondary: #9DA5BC;
-
-  /* Acentos Tropical Bloom */
-  --accent-violet: #14C8FF;   /* turquesa brillante */
-  --accent-magenta: #FF6E9B;  /* coral rosado */
-  --accent-cyan:   #29FFD0;   /* verde menta neon */
-  --accent-gold:   #FFB740;   /* mandarina suave */
-
-  /* Degradado Aurora actualizado */
-  --aurora-gradient: linear-gradient(100deg,
-                        var(--accent-violet) 0%,
-                        var(--accent-magenta) 40%,
-                        var(--accent-gold)   70%,
-                        var(--accent-cyan)  100%);
+  /* Acentos y textos */
+  --glow-primary:#ffffff;
+  --glow-lines:#cfe1ff;
+  --text:#0e1628;
 }
 
-/* 3️⃣  COLORES DE LOS BLOBS (mismo tamaño y animación) */
-.aurora-shape.shape1 { background: var(--accent-magenta); } /* coral rosado */
-.aurora-shape.shape2 { background: var(--accent-cyan);    } /* verde menta */
-.aurora-shape.shape3 { background: var(--accent-violet);  } /* turquesa */
-
-/* 4️⃣  COLORES DE TARJETA SEGÚN TEMA (solo si usas las clases) */
-.service-card.theme-violet .card-icon-wrapper { background: var(--accent-violet); box-shadow: 0 0 20px -5px var(--accent-violet); }
-.service-card.theme-magenta .card-icon-wrapper { background: var(--accent-magenta); box-shadow: 0 0 20px -5px var(--accent-magenta); }
-.service-card.theme-cyan .card-icon-wrapper    { background: var(--accent-cyan);    box-shadow: 0 0 20px -5px var(--accent-cyan); }
-.service-card.theme-gold .card-icon-wrapper    { background: var(--accent-gold);    box-shadow: 0 0 20px -5px var(--accent-gold); }
-
-.nav, .main-container { z-index: 1; /* Para que estén sobre el fondo */ }
-.nav { background: rgba(18, 24, 38, 0.3); backdrop-filter: blur(12px); border-bottom: 1px solid var(--color-border-glass); padding: 16px 24px; }
-.main-container { flex: 1; overflow-y: auto; padding: 24px; max-width: 1100px; width: 100%; margin: 0 auto; }
-.main-container::-webkit-scrollbar { width: 8px; }
-.main-container::-webkit-scrollbar-track { background: transparent; }
-.main-container::-webkit-scrollbar-thumb { background: rgba(128, 142, 173, 0.3); border-radius: 4px; }
-
-/* --- Hero Section --- */
-.hero-section { text-align: center; padding: 48px 0; }
-.hero-section h1 { font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 700; line-height: 1.2; margin-bottom: 16px; text-shadow: 0 0 15px rgba(227, 35, 255, 0.3); }
-.hero-section p { font-size: 1.1rem; color: var(--color-text-secondary); max-width: 600px; margin: 0 auto; }
-
-/* --- Módulos de Acción (Las Tarjetas) --- */
-.service-cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 24px; margin-top: 48px; }
-
-@keyframes particle-glow {
-    from { transform: translateY(100%); opacity: 0; }
-    to { transform: translateY(-100%); opacity: 1; }
+/* Fondo: degradado violeta → azul → aqua (estático) */
+.main.theme-violet-azure{
+  background:
+    radial-gradient(1200px 800px at -10% -20%, rgba(127,90,240,.22), transparent 60%),
+    radial-gradient(1000px 700px at 110% 0%, rgba(46,217,255,.18), transparent 60%),
+    linear-gradient(115deg, #1a1240 0%, #2c1d8f 28%, #1766ff 58%, #2ed9ff 100%) fixed;
+}
+.main.theme-violet-azure .neural-grid{ opacity:.18; }
+.main.theme-violet-azure .hero-section h1{
+  color:#fff;
+  text-shadow:0 0 30px rgba(255,255,255,.22),0 0 80px rgba(46,217,255,.22);
 }
 
-.service-card {
-    position: relative;
-    padding: 24px;
-    border-radius: 16px;
-    background: var(--color-surface-glass);
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--color-border-glass);
-    overflow: hidden;
-    cursor: pointer;
-    transition: transform 0.4s ease, box-shadow 0.4s ease;
+/* --------- Tarjetas (glass tint violeta, mejor contraste) --------- */
+.theme-violet-azure .service-card{
+  background: linear-gradient(180deg, rgba(30,28,72,.52), rgba(30,28,72,.38));
+  border-color: rgba(172, 188, 255, .28);
+  box-shadow: 0 12px 34px rgba(8,14,40,.38), inset 0 1px 0 rgba(255,255,255,.10);
 }
-.service-card:hover { transform: translateY(-10px) scale(1.03); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
-
-/* Efecto de borde brillante al hacer hover */
-.card-glow-border {
-    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: var(--aurora-gradient);
-    opacity: 0; transition: opacity 0.4s ease;
-    animation: spin 5s linear infinite;
+.theme-violet-azure .service-card::before{ filter: blur(7px); opacity:.95; }
+.theme-violet-azure .card-icon-wrapper{
+  background:#12163e;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.25);
 }
-.service-card:hover .card-glow-border { opacity: 1; }
-@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-/* Máscara para crear el borde */
-.card-glow-border { -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+.theme-violet-azure .service-card h3{ color:#061128; }
+.theme-violet-azure .service-card-description{ color:#0f1a2f; }
 
-
-/* Efecto de partículas (la magia) */
-.card-particle-effect {
-    content: ''; position: absolute; top: 0; left: 0; width: 200%; height: 100%;
-    background-image: radial-gradient(circle, white 1px, transparent 1.5px);
-    background-size: 50px 50px;
-    opacity: 0;
-    transition: opacity 0.6s ease;
-    animation: particle-glow 10s linear infinite;
+/* --------- Search bar / Composer --------- */
+.theme-violet-azure .search-box{
+  background: linear-gradient(180deg, rgba(255,255,255,.20), rgba(255,255,255,.16));
+  border-color: rgba(172,188,255,.36);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
-.service-card:hover .card-particle-effect { opacity: 0.1; }
-
-.service-card-header, .service-card-description { position: relative; z-index: 2; background: transparent; }
-.service-card-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
-
-/* Iconos con color y pedestal */
-.card-icon-wrapper {
-    flex-shrink: 0; width: 52px; height: 52px; display: grid; place-items: center;
-    border-radius: 50%;
-    border: 1px solid var(--color-border-glass);
-    transition: box-shadow 0.4s ease;
+.theme-violet-azure .search-box input{ color:#09142a; }
+.theme-violet-azure .search-box input::placeholder{ color:#b9cbff; }
+.theme-violet-azure .icon-buttons button{ background:#12163e; }
+.theme-violet-azure .icon-buttons .send-btn{
+  background: linear-gradient(135deg, #1766ff, #2ed9ff);
+  color:#081332;
 }
-.card-icon-wrapper img { width: 26px; height: 26px; }
-.service-card h3 { font-size: 1.1rem; font-weight: 600; color: var(--color-text-primary); }
-.service-card-description { font-size: 0.9rem; color: var(--color-text-secondary); line-height: 1.6; }
 
-/* Asignación de colores a cada tema de tarjeta */
-.service-card.theme-violet .card-icon-wrapper { background: var(--accent-violet); box-shadow: 0 0 20px -5px var(--accent-violet); }
-.service-card.theme-magenta .card-icon-wrapper { background: var(--accent-magenta); box-shadow: 0 0 20px -5px var(--accent-magenta); }
-.service-card.theme-cyan .card-icon-wrapper { background: var(--accent-cyan); box-shadow: 0 0 20px -5px var(--accent-cyan); }
-.service-card.theme-gold .card-icon-wrapper { background: var(--accent-gold); box-shadow: 0 0 20px -5px var(--accent-gold); }
-
-
-/* --- Sección de Chat Directo --- */
-.direct-chat-section { margin-top: 48px; }
-.main-bottom { max-width: 100%; }
-.search-box {
-    display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: 16px;
-    background: var(--color-surface-glass); border: 1px solid var(--color-border-glass);
-    transition: all 0.3s ease;
+/* --------- Chat wrapper (usa tu upgrade de legibilidad) --------- */
+.theme-violet-azure .chat-wrapper::before{
+  /* velo interno con tinte violeta */
+  background:
+    linear-gradient(180deg, rgba(15,18,44,.78), rgba(18,23,58,.64) 40%, rgba(18,23,58,.58) 100%),
+    radial-gradient(120% 70% at 50% 0%, rgba(255,255,255,.08), transparent 60%);
 }
-.search-box:focus-within { border-color: var(--accent-cyan); box-shadow: 0 0 15px rgba(35, 221, 255, 0.2); }
-.search-box input {
-    flex: 1; background: transparent; border: none; outline: none; padding: 12px; font-size: 1rem;
-    color: var(--color-text-primary); font-family: var(--font-family);
+/* Burbujas */
+.theme-violet-azure .msg--bot .bubble{
+  background: linear-gradient(180deg, rgba(255,255,255,.24), rgba(255,255,255,.18));
+  color:#edf4ff;
 }
-.icon-buttons { display: flex; align-items: center; }
-.icon-buttons button { background: none; border: none; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; transition: background-color 0.2s; }
-.icon-buttons button:hover { background-color: rgba(228, 228, 231, 0.1); }
-.icon-buttons button img { width: 22px; }
+.theme-violet-azure .msg--user .bubble{
+  background: linear-gradient(135deg, #1755ff, #1fd6ff);
+  color:#fff; border-color: transparent;
+  box-shadow: 0 14px 32px rgba(23,85,255,.30);
+}
 
-/* Botón de Enviar con Gradiente Aurora */
-.send-btn {
-    background: var(--aurora-gradient) !important;
-    background-size: 200% auto !important;
-    transition: background-position 0.4s ease !important;
+/* Header del chat */
+.theme-violet-azure .chat-header-compact{
+  background: linear-gradient(180deg, rgba(18,22,58,.76), rgba(18,22,58,.58));
+  border-bottom:1px solid rgba(172,188,255,.28);
 }
-.send-btn:hover { background-position: right center !important; }
+
+/* Scrollbar del chat a juego */
+.theme-violet-azure .chat-log::-webkit-scrollbar-thumb{
+  background: linear-gradient(180deg, rgba(157,184,255,.45), rgba(46,217,255,.35));
+  border-radius:999px;
+}
+
+/* Safari fallback por si no hay blur */
+@supports not ((-webkit-backdrop-filter: blur(0)) or (backdrop-filter: blur(0))) {
+  .theme-violet-azure .search-box,
+  .theme-violet-azure .chat-wrapper::before{
+    -webkit-backdrop-filter:none; backdrop-filter:none;
+    background: linear-gradient(180deg, rgba(15,18,44,.88), rgba(18,23,58,.76)) !important;
+  }
+}
+
+
+
+   .chat-header-compact{
+     padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.12);
+     display:flex;align-items:center;justify-content:space-between
+   }
+   /* Tamaños fijos en header compacto */
+   .chat-header-compact .brand img{
+     width:60px; 
+     height:40px;
+     border-radius:var(--radius-4xl); 
+    }
+   .chat-header-compact > img{ width:40px; height:40px; border-radius:var(--radius-full); }
+   .chat-header-compact img{ max-width:none; }
+   
+   .chat-title{font-weight:800;color:#e6f2ff}
+   
+   .chat-log{padding:16px;overflow-y:auto;flex:1}
+   .chat-log::-webkit-scrollbar{width:10px}
+   .chat-log::-webkit-scrollbar-thumb{
+     background:linear-gradient(180deg,rgba(154,209,255,.45),rgba(63,255,131,.35));border-radius:999px}
+   
+   .msg{display:flex;gap:12px;margin-bottom:14px}
+   .msg--end{justify-content:flex-end}
+   .avatar{
+    width:39px;
+    height:39px;
+    border-radius:var(--radius-full);
+    overflow:-moz-hidden-unscrollable;
+    border:1px solid rgba(151, 172, 207, 0.096);box-shadow:0 4px 14px rgba(0,0,0,.25);background:#080808}
+   .bubble{
+     max-width:min(78ch,80%);
+     padding:12px 14px;
+     border-radius:16px;
+     border:1px solid rgba(255,255,255,.18);
+     background:rgba(255,255,255,.15);color:var(--text);
+     box-shadow:0 8px 20px rgba(0, 0, 0, 0.25),inset 0 1px 0 rgba(255,255,255,.08);line-height:1.55
+   }
+   .msg--user .bubble{
+     background:linear-gradient(140deg, #ff00eefc, #5702ea); 
+     color:#fff; 
+     border-color:transparent
+   }
+   .msg--bot .bubble{ background:rgba(57, 5, 215, 0.937); color:#ffffff }
+   
+   .typing{display:flex;gap:6px;align-items:center}
+   .dot{width:8px;height:8px;border-radius:50%;background:#fff;opacity:.85;animation:bounce .9s infinite ease-in-out}
+   
+   /* Composer inferior (reutiliza search-box) */
+   .composer{padding:12px;border-top:1px solid rgba(255,255,255,.12)}
+   
+   /* Accesibilidad: foco global */
+   *:focus-visible{ outline:none }
+   button:focus-visible{ box-shadow:0 0 0 4px rgba(0,229,255,.35) }
+   
+
+
+   /*.main.theme-cyber-sunset{
+    background: url("../../resources/js/pages/assets/hero-bg-cyber-sunset.svg") center / cover fixed no-repeat;
+  }*/

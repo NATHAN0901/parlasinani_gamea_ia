@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-labelledby="title desc">
+  <title id="title">Icono cerebro en red (animado, violeta degradado)</title>
+  <desc id="desc">Un cerebro estilizado formado por nodos y líneas conectadas, con animaciones sutiles de pulso y flujo, en un degradado violeta.</desc>
+
+  <defs>
+    <linearGradient id="violetFlow" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#7c3aed">
+        <animate attributeName="offset" values="0;0.25;0.5;0.75;1" dur="12s" repeatCount="indefinite"/>
+      </stop>
+      <stop offset="50%" stop-color="#a855f7">
+        <animate attributeName="offset" values="0.25;0.5;0.75;1;0.25" dur="12s" repeatCount="indefinite"/>
+      </stop>
+      <stop offset="100%" stop-color="#e879f9">
+        <animate attributeName="offset" values="0.5;0.75;1;0.25;0.5" dur="12s" repeatCount="indefinite"/>
+      </stop>
+      <animateTransform attributeName="gradientTransform" type="rotate" from="0 256 256" to="360 256 256" dur="20s" repeatCount="indefinite"/>
+    </linearGradient>
+
+    <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <style><![CDATA[
+      :root { --stroke: 12; }
+      .net {
+        stroke: url(#violetFlow);
+        stroke-width: var(--stroke);
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        fill: none;
+        vector-effect: non-scaling-stroke;
+        stroke-dasharray: 6 14;
+        animation: dash 6s linear infinite;
+        filter: url(#softGlow);
+      }
+      .node {
+        stroke: url(#violetFlow);
+        stroke-width: var(--stroke);
+        fill: #ffffff;
+        filter: url(#softGlow);
+      }
+      .nodePulse { animation: pulse 2.8s ease-in-out infinite; }
+      .nodePulse.d2 { animation-delay: .6s; }
+      .nodePulse.d3 { animation-delay: 1.2s; }
+      .nodePulse.d4 { animation-delay: 1.8s; }
+      .nodePulse.d5 { animation-delay: 2.4s; }
+
+      .plus rect { fill: #4b5563; }
+      .plus { opacity: .9; }
+      .plus.f1 { animation: float 5.5s ease-in-out -1s infinite; }
+      .plus.f2 { animation: float 6.2s ease-in-out -2s infinite; }
+      .plus.f3 { animation: float 5.8s ease-in-out -3s infinite; }
+      .plus.f4 { animation: float 6.6s ease-in-out -1.5s infinite; }
+
+      @keyframes dash {
+        to { stroke-dashoffset: -200; }
+      }
+      @keyframes pulse {
+        0%, 100% { r: 12; }
+        50% { r: 16; }
+      }
+      @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); opacity: .85; }
+        50% { transform: translateY(-8px) rotate(8deg); opacity: 1; }
+      }
+
+      /* Accesibilidad: respeta reduce-motion */
+      @media (prefers-reduced-motion: reduce) {
+        .net { animation: none; stroke-dasharray: none; }
+        .nodePulse, .plus { animation: none; }
+      }
+    ]]></style>
+  </defs>
+
+  <!-- Líneas de red (aprox. a la imagen de referencia) -->
+  <g stroke="url(#violetFlow)">
+    <!-- conexiones externas e internas -->
+    <path class="net" d="M90,230 L130,170 L200,130 L270,130 L330,170 L390,220 L390,300 L330,345 L270,370 L205,345 L165,270 L130,300 L95,300 L95,230 Z"/>
+    <path class="net" d="M130,170 L140,250 L255,290 L330,315 L390,265"/>
+    <path class="net" d="M200,130 L245,175 L310,225 L390,220"/>
+    <path class="net" d="M200,130 L245,175 L200,250 L225,330"/>
+    <path class="net" d="M270,130 L225,170 L165,270"/>
+    <path class="net" d="M330,170 L285,245 L330,315"/>
+    <path class="net" d="M285,245 L390,300"/>
+    <path class="net" d="M205,345 L245,420"/>
+    <path class="net" d="M330,345 L330,440"/>
+  </g>
+
+  <!-- Nodos -->
+  <g>
+    <circle class="node nodePulse" cx="90" cy="230" r="12"/>
+    <circle class="node nodePulse d2" cx="130" cy="170" r="12"/>
+    <circle class="node nodePulse d3" cx="200" cy="130" r="12"/>
+    <circle class="node nodePulse d4" cx="270" cy="130" r="12"/>
+    <circle class="node nodePulse d5" cx="330" cy="170" r="12"/>
+    <circle class="node nodePulse" cx="390" cy="220" r="12"/>
+    <circle class="node nodePulse d2" cx="390" cy="300" r="12"/>
+    <circle class="node nodePulse d3" cx="330" cy="345" r="12"/>
+    <circle class="node nodePulse d4" cx="270" cy="370" r="12"/>
+    <circle class="node nodePulse d5" cx="205" cy="345" r="12"/>
+    <circle class="node nodePulse" cx="165" cy="270" r="12"/>
+    <circle class="node nodePulse d2" cx="130" cy="300" r="12"/>
+    <circle class="node nodePulse d3" cx="95" cy="300" r="12"/>
+    <circle class="node nodePulse d4" cx="255" cy="290" r="12"/>
+    <circle class="node nodePulse d5" cx="330" cy="315" r="12"/>
+    <circle class="node nodePulse" cx="285" cy="245" r="12"/>
+    <circle class="node nodePulse d2" cx="245" cy="420" r="12"/>
+    <circle class="node nodePulse d3" cx="330" cy="440" r="12"/>
+  </g>
+
+  <!-- Pequeños signos + como en la referencia -->
+  <g class="plus f1" transform="translate(60,70)">
+    <rect x="-6" y="-18" width="12" height="12"/>
+    <rect x="-18" y="-6" width="12" height="12"/>
+    <rect x="6" y="-6" width="12" height="12"/>
+    <rect x="-6" y="6" width="12" height="12"/>
+  </g>
+
+  <g class="plus f2" transform="translate(430,90)">
+    <rect x="-6" y="-18" width="12" height="12"/>
+    <rect x="-18" y="-6" width="12" height="12"/>
+    <rect x="6" y="-6" width="12" height="12"/>
+    <rect x="-6" y="6" width="12" height="12"/>
+  </g>
+
+  <g class="plus f3" transform="translate(100,410)">
+    <rect x="-6" y="-18" width="12" height="12"/>
+    <rect x="-18" y="-6" width="12" height="12"/>
+    <rect x="6" y="-6" width="12" height="12"/>
+    <rect x="-6" y="6" width="12" height="12"/>
+  </g>
+
+  <g class="plus f4" transform="translate(415,390)">
+    <rect x="-6" y="-18" width="12" height="12"/>
+    <rect x="-18" y="-6" width="12" height="12"/>
+    <rect x="6" y="-6" width="12" height="12"/>
+    <rect x="-6" y="6" width="12" height="12"/>
+  </g>
+</svg>

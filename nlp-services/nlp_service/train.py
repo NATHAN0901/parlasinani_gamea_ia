@@ -33,6 +33,12 @@ from transformers import (
 
 # métrica propia que ya tenías
 from nlp_service.utils import classification_metrics
+from transformers import EarlyStoppingCallback
+
+import torch, os
+torch.set_num_threads(8)
+torch.set_num_interop_threads(2)  # evita sobre-saturar
+os.environ.setdefault("TOKENIZERS_PARALLELISM", "true")
 
 app  = typer.Typer(add_completion=False)
 BASE = pathlib.Path(__file__).resolve().parents[1]
@@ -114,6 +120,8 @@ def run(
         metric_for_best_model="f1_weighted",
         save_total_limit=1,
         seed=42,
+        dataloader_num_workers=4,  # prueba 4–8
+        logging_steps=100,
         report_to="none",          # desactiva WandB/TensorBoard
     )
 
@@ -125,6 +133,7 @@ def run(
         eval_dataset=ds["val"],
         tokenizer=tok,
         data_collator=data_collator,
+        callbacks=[EarlyStoppingCallback(early_stopping_patience=2)],
         compute_metrics=classification_metrics,
     )
 
